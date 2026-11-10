@@ -2,48 +2,265 @@
 <!DOCTYPE html>
 <html lang="cs">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Živý adventní kalendář Jáchymova 2026</title>
-  <style>
-    body {
-      margin: 0;
-      background: #16364a;
-      color: white;
-      font-family: Arial, sans-serif;
-      text-align: center;
-      padding: 30px 16px;
-    }
-    h1 { color: #f5d99b; }
-    .okna {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 12px;
-      max-width: 500px;
-      margin: 30px auto;
-    }
-    .okno {
-      padding: 20px 5px;
-      background: #345e73;
-      border-radius: 12px;
-      font-size: 24px;
-    }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Živý adventní kalendář Jáchymova 2026</title>
+<style>
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  background: #10253c;
+  color: #fff3df;
+  font-family: Georgia, serif;
+}
+.scene {
+  position: relative;
+  width: 100%;
+  max-width: 1800px;
+  margin: auto;
+}
+.scene img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+.hotspot {
+  position: absolute;
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+  border-radius: 8px;
+}
+.hotspot:hover {
+  background: rgba(255, 216, 111, .25);
+  box-shadow: 0 0 25px 9px rgba(255,196,73,.65);
+}
+.hotspot:focus-visible {
+  outline: 3px solid #fff;
+  background: rgba(255,216,111,.25);
+}
+.panel {
+  max-width: 1000px;
+  margin: 24px auto;
+  padding: 24px;
+  background: #203e58;
+  border: 1px solid #b89a67;
+  border-radius: 16px;
+}
+h2 { color: #ffe0a2; }
+button { font: inherit; }
+.day {
+  display: inline-block;
+  padding: 12px;
+  margin: 5px;
+  background: #355b73;
+  color: white;
+  border: 1px solid #b89a67;
+  border-radius: 8px;
+  cursor: pointer;
+}
+.day:hover { background: #597c8c; }
+dialog {
+  max-width: min(92vw, 550px);
+  border: 2px solid #c6a66d;
+  border-radius: 18px;
+  padding: 25px;
+  background: #fff5e5;
+  color: #34291e;
+  line-height: 1.6;
+}
+dialog::backdrop { background: rgba(0,0,0,.75); }
+.close {
+  float: right;
+  padding: 7px 13px;
+  cursor: pointer;
+}
+a { color: #ffe0a2; }
+@media (max-width:600px) {
+  .panel { margin: 12px; padding: 16px; }
+  .hotspot { border-radius: 2px; }
+}
+</style>
 </head>
 <body>
-  <h1>🎄 Živý adventní kalendář Jáchymova</h1>
-  <p>1.–24. prosince 2026</p>
-  <p>24 dní, 24 míst, 24 adventních překvapení</p>
-  <div class="okna" id="okna"></div>
-  <p>Brzy společně otevřeme první okénko!</p>
-  <script>
-    const okna = document.getElementById("okna");
-    for (let den = 1; den <= 24; den++) {
-      const okno = document.createElement("div");
-      okno.className = "okno";
-      okno.textContent = den;
-      okna.appendChild(okno);
-    }
-  </script>
+
+<div class="scene" id="scene">
+  <img src="Živý adventní kalendář Jáchymova.png"
+       alt="Zasněžený Jáchymov s 24 adventními okénky">
+</div>
+
+<section class="panel" id="program">
+  <h2>🎄 Program adventního putování</h2>
+  <p>Vyberte datum a zjistěte, co se v Jáchymově chystá.</p>
+  <div id="days"></div>
+</section>
+
+<section class="panel" id="informace">
+  <h2>Praktické informace</h2>
+  <p>Od 1. do 24. prosince navštívíme různá místa
+  Jáchymova. Každý den nás čeká jiné adventní setkání.</p>
+  <p>Děti budou na jednotlivých místech hledat tajná
+  hesla. Za alespoň 10 nalezených hesel se mohou
+  přihlásit do slosování o drobné dárečky.</p>
+  <p><strong>Slosování: 3. ledna 2027.</strong></p>
+  <p>Online hrací kartičky a tisknutelnou variantu
+  právě připravujeme.</p>
+</section>
+
+<dialog id="detail">
+  <button class="close" onclick="detail.close()"
+          aria-label="Zavřít">✕</button>
+  <h2 id="detailTitle"></h2>
+  <p id="detailText"></p>
+  <p id="detailPlace"></p>
+  <p id="detailTime"></p>
+  <button onclick="detail.close()">Zavřít</button>
+</dialog>
+
+<script>
+const program = {
+  2: ["Vánoční fotoateliér",
+      "Prohlídka vánočního ateliéru a fotografie pro děti. Rezervace nutná.",
+      "Třída Dukelských hrdinů 334", "16:00–18:00"],
+  3: ["Klub pod Vlčí horou",
+      "Dětské úkoly, hádanky a malé pohoštění.",
+      "Náměstí Republiky 145", "16:00–18:00"],
+  4: ["Mikulášská párty",
+      "Mikulášské setkání u špitálního kostelíku.",
+      "Špitální kostelík", "Čas upřesníme"],
+  5: ["Vzhůru za Grinchem!",
+      "Vánoční dobrodružství nad Jáchymovem.",
+      "Na Svornosti, ev. č. 3", "17:00–18:00"],
+  6: ["Advent v Řetízkárně",
+      "Oheň, čaj, cukroví, přání a koledy.",
+      "Řetízkárna", "14:00–16:00"],
+  7: ["Adventní setkání",
+      "Podrobnosti programu připravujeme.",
+      "K Lanovce 1050", "15:00–17:00"],
+  9: ["Česko zpívá koledy",
+      "Společné zpívání koled.",
+      "Kostel sv. Jáchyma", "Od 18:00"],
+  10: ["Vánoční jarmark",
+       "Vánoční setkání ve škole.",
+       "ZŠ a MŠ Jáchymov", "15:30–18:30"],
+  11: ["U oveček",
+       "Adventní setkání s ovečkami. Omezená kapacita.",
+       "Suchá 132", "Čas upřesníme"],
+  12: ["Česká mše vánoční",
+       "Vánoční mše Jakuba Jana Ryby.",
+       "Špitální kostel", "Od 18:00"],
+  13: ["Lampionový průvod sv. Lucie",
+       "Adventní průvod městem.",
+       "Průvod ke kapli Jana Nepomuckého", "Čas upřesníme"],
+  16: ["Jak mumínci čekali na Vánoce",
+       "Příběh, vánoční strom a výměna malých dárečků.",
+       "Altán u hřiště před DPS", "Od 17:00"],
+  17: ["Flétnový koncert",
+       "Adventní hudební setkání.",
+       "KKC radnice", "Od 15:30"],
+  18: ["Vánoční úkol pro děti",
+       "Malý úkol s odměnou. Omezená kapacita.",
+       "Třída Čs. armády 99", "17:00–20:00"],
+  19: ["Budulínek",
+       "Pohádkové setkání v knihovně.",
+       "Městská knihovna", "Od 15:00"],
+  20: ["Koncert Pološero",
+       "Adventní koncert.",
+       "Špitální kostel", "16:00"],
+  22: ["Sousedské setkání",
+       "Adventní setkání s dětským koutkem.",
+       "Palackého 372", "Od 16:00"],
+  23: ["Advent ve Šlikově parku",
+       "Jmelí u památníku zakladatele města, koledy a pohoštění.",
+       "Šlikův park", "17:00–18:00"],
+  24: ["Betlémské světlo",
+       "Skauti přinesou Betlémské světlo na více míst ve městě.",
+       "Více míst v Jáchymově", "Časy upřesníme"]
+};
+
+const positions = {
+  1:[8.5,31.5], 2:[15.2,33.8],
+  3:[8.7,47.5], 4:[15,49.5],
+  5:[23.5,45], 6:[28.7,46],
+  7:[23.5,59], 8:[28.7,60],
+  9:[38.5,35], 10:[35.7,47.5],
+  11:[41.7,47.5], 12:[35.7,60],
+  13:[41.7,60], 14:[48.5,49],
+  15:[54.5,49], 16:[48.5,62],
+  17:[54.5,62], 18:[65.8,46],
+  19:[62.5,60], 20:[69,60],
+  21:[75.5,61], 22:[82.5,62],
+  23:[85.7,62], 24:[90.2,60]
+};
+
+const scene = document.getElementById("scene");
+const days = document.getElementById("days");
+const detail = document.getElementById("detail");
+
+function openDay(n) {
+  const item = program[n];
+  document.getElementById("detailTitle").textContent =
+    n + ". prosince 2026";
+  document.getElementById("detailText").textContent =
+    item ? item[0] + " – " + item[1] :
+    "Program tohoto dne zatím připravujeme.";
+  document.getElementById("detailPlace").textContent =
+    item ? "📍 " + item[2] : "";
+  document.getElementById("detailTime").textContent =
+    item ? "🕒 " + item[3] : "";
+  detail.showModal();
+}
+
+for (let n = 1; n <= 24; n++) {
+  const p = positions[n];
+  const b = document.createElement("button");
+  b.className = "hotspot";
+  b.style.left = (p[0]-2.1) + "%";
+  b.style.top = (p[1]-3.3) + "%";
+  b.style.width = "4.2%";
+  b.style.height = "6.6%";
+  b.setAttribute("aria-label", n + ". prosince");
+  b.title = n + ". prosince";
+  b.onclick = () => openDay(n);
+  scene.appendChild(b);
+
+  const d = document.createElement("button");
+  d.className = "day";
+  d.textContent = n;
+  d.onclick = () => openDay(n);
+  days.appendChild(d);
+}
+
+// Klikací oblasti čtyř tlačítek na spodku ilustrace.
+const navigation = [
+  [18,91,"#program"],
+  [39,91,"#program"],
+  [61,91,"#program"],
+  [82,91,"#informace"]
+];
+
+const labels = [
+  "Adventní kalendář",
+  "Program",
+  "Mapa Jáchymova – přehled míst",
+  "Praktické informace"
+];
+
+navigation.forEach((p,i) => {
+  const b = document.createElement("button");
+  b.className = "hotspot";
+  b.style.left = (p[0]-10) + "%";
+  b.style.top = (p[1]-5) + "%";
+  b.style.width = "20%";
+  b.style.height = "10%";
+  b.setAttribute("aria-label",labels[i]);
+  b.onclick = () => {
+    document.querySelector(p[2]).scrollIntoView({
+      behavior:"smooth"
+    });
+  };
+  scene.appendChild(b);
+});
+</script>
 </body>
 </html>
