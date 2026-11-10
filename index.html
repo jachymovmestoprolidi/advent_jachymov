@@ -262,5 +262,359 @@ navigation.forEach((p,i) => {
   scene.appendChild(b);
 });
 </script>
+
+<!-- DĚTSKÁ ADVENTNÍ HRA – TESTOVACÍ VERZE -->
+<style>
+  #advent-hra {
+    max-width: 1000px;
+    margin: 24px auto;
+    padding: 24px;
+    border: 1px solid #d9b77c;
+    border-radius: 20px;
+    background: #213d54;
+    color: #fff5e5;
+    font-family: Arial, sans-serif;
+  }
+  #advent-hra h2 { color: #ffe1a3; }
+  #advent-hra input, #advent-hra select {
+    padding: 12px;
+    border-radius: 8px;
+    border: 1px solid #d6c5a8;
+    font-size: 16px;
+    max-width: 100%;
+  }
+  #advent-hra button {
+    padding: 12px;
+    border: 1px solid #bfa06b;
+    border-radius: 9px;
+    cursor: pointer;
+    background: #f7e6c6;
+    color: #35291d;
+    font-size: 15px;
+  }
+  #advent-hra button:disabled {
+    opacity: .55;
+    cursor: default;
+  }
+  .hra-form, .hra-tools {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin: 15px 0;
+  }
+  #hra-okna {
+    display: grid;
+    grid-template-columns: repeat(6, minmax(0,1fr));
+    gap: 8px;
+    margin: 20px 0;
+  }
+  #hra-okna button {
+    min-height: 56px;
+    background: #355b73;
+    color: white;
+    font-weight: bold;
+    font-size: 19px;
+  }
+  #hra-okna button.hotovo {
+    background: #d9ad59;
+    color: #292015;
+  }
+  #hra-okna button.vybrane {
+    outline: 3px solid white;
+  }
+  #hra-zprava {
+    min-height: 24px;
+    font-weight: bold;
+  }
+  .hra-progress {
+    width: 100%;
+    height: 13px;
+    background: #49657a;
+    border-radius: 20px;
+    overflow: hidden;
+  }
+  #hra-progress-bar {
+    height: 100%;
+    width: 0;
+    background: #e6bd70;
+    transition: width .3s;
+  }
+  #hra-tisk { display: none; }
+
+  @media (max-width: 600px) {
+    #advent-hra { margin: 12px; padding: 15px; }
+    #hra-okna { gap: 5px; }
+    #hra-okna button { min-height: 45px; padding: 5px; }
+  }
+
+  @media print {
+    @page { size: A5 portrait; margin: 9mm; }
+    body > *:not(#hra-tisk) { display: none !important; }
+    #hra-tisk {
+      display: block !important;
+      color: black;
+      background: white;
+      font: 12px Arial, sans-serif;
+    }
+    #hra-tisk h1 { text-align: center; font-size: 20px; }
+    .tisk-grid {
+      display: grid;
+      grid-template-columns: repeat(4,1fr);
+      gap: 5px;
+      margin: 15px 0;
+    }
+    .tisk-policko {
+      border: 1px solid #555;
+      height: 56px;
+      padding: 5px;
+      font-size: 13px;
+    }
+    .tisk-udaje { margin-top: 15px; line-height: 2.3; }
+  }
+</style>
+
+<section id="advent-hra">
+  <h2>🎁 Moje adventní putování</h2>
+  <p>
+    Každé dítě má vlastní kartičku.
+    Na adventních místech hledej tajná hesla
+    a postupně rozsvěcuj svá okénka.
+  </p>
+
+  <h3>Přidat dítě</h3>
+  <div class="hra-form">
+    <input id="hra-jmeno" maxlength="40"
+           placeholder="Jméno nebo přezdívka"
+           aria-label="Jméno dítěte">
+    <input id="hra-vek" type="number"
+           min="1" max="17"
+           placeholder="Věk" aria-label="Věk dítěte">
+    <button type="button" id="hra-pridat">
+      + Přidat kartičku
+    </button>
+  </div>
+
+  <div class="hra-tools">
+    <label for="hra-dite">Hraje:</label>
+    <select id="hra-dite"></select>
+    <button type="button" id="hra-tisknout">
+      🖨️ Vytisknout A5
+    </button>
+  </div>
+
+  <div id="hra-obsah" hidden>
+    <h3 id="hra-nadpis"></h3>
+    <p id="hra-pocet"></p>
+    <div class="hra-progress">
+      <div id="hra-progress-bar"></div>
+    </div>
+    <div id="hra-okna"></div>
+
+    <h3 id="hra-den-nadpis">Vyber adventní okénko</h3>
+    <div class="hra-form">
+      <input id="hra-heslo"
+             placeholder="Tajné heslo"
+             autocomplete="off"
+             aria-label="Tajné heslo">
+      <button type="button" id="hra-overit">
+        Odemknout okénko
+      </button>
+    </div>
+    <p id="hra-zprava" role="status"></p>
+    <p id="hra-soutez"></p>
+  </div>
+
+  <p style="font-size:13px;opacity:.85">
+    Zkušební verze: hesla TEST1 až TEST24.
+    Postup se ukládá pouze v tomto prohlížeči.
+    Nezadávejte kontaktní údaje.
+  </p>
+</section>
+
+<section id="hra-tisk">
+  <h1>🎄 Adventní putování Jáchymovem</h1>
+  <p>1.–24. prosince 2026</p>
+  <p>Navštiv adventní místa a zapisuj nalezená hesla.</p>
+  <div class="tisk-grid" id="tisk-policka"></div>
+  <p>
+    Alespoň 10 nalezených hesel tě zařadí
+    do slosování 3. ledna 2027.
+  </p>
+  <div class="tisk-udaje">
+    Jméno dítěte: __________________________<br>
+    Věk dítěte: ____________________________<br>
+    Kontakt na rodiče: ______________________
+  </div>
+  <p>
+    Místo a termín odevzdání budou upřesněny.
+  </p>
+</section>
+
+<script>
+(() => {
+  "use strict";
+
+  const KEY = "jachymov_advent_test_v1";
+  const $ = id => document.getElementById(id);
+
+  let deti = [];
+  let vybraneId = null;
+  let den = 1;
+
+  try {
+    const ulozene = JSON.parse(localStorage.getItem(KEY));
+    if (Array.isArray(ulozene)) deti = ulozene;
+  } catch (e) {
+    deti = [];
+  }
+
+  function uloz() {
+    try {
+      localStorage.setItem(KEY, JSON.stringify(deti));
+    } catch (e) {
+      zprava("Nepodařilo se uložit postup v prohlížeči.");
+    }
+  }
+
+  function aktualni() {
+    return deti.find(d => d.id === vybraneId);
+  }
+
+  function zprava(text) {
+    $("hra-zprava").textContent = text;
+  }
+
+  function zobraz() {
+    const vyber = $("hra-dite");
+    vyber.replaceChildren();
+
+    deti.forEach(d => {
+      const opt = document.createElement("option");
+      opt.value = d.id;
+      opt.textContent = d.jmeno + " (" + d.vek + " let)";
+      vyber.appendChild(opt);
+    });
+
+    if (!deti.some(d => d.id === vybraneId)) {
+      vybraneId = deti.length ? deti[0].id : null;
+    }
+
+    $("hra-obsah").hidden = !vybraneId;
+
+    if (!vybraneId) return;
+
+    vyber.value = vybraneId;
+    const dite = aktualni();
+    const pocet = dite.hotovo.length;
+
+    $("hra-nadpis").textContent =
+      "Kartička: " + dite.jmeno;
+
+    $("hra-pocet").textContent =
+      "Nasbíraná hesla: " + pocet + " z 24";
+
+    $("hra-progress-bar").style.width =
+      Math.min(100, pocet / 10 * 100) + "%";
+
+    $("hra-soutez").textContent = pocet >= 10
+      ? "🎉 Máš alespoň 10 hesel! Splňuješ herní podmínku pro slosování. Přihlášky doplníme později."
+      : "Do slosování ti zbývá ještě " +
+        (10 - pocet) + " hesel.";
+
+    $("hra-den-nadpis").textContent =
+      den + ". prosince – tajné heslo";
+
+    const okna = $("hra-okna");
+    okna.replaceChildren();
+
+    for (let n = 1; n <= 24; n++) {
+      const b = document.createElement("button");
+      b.type = "button";
+      b.textContent = dite.hotovo.includes(n) ? "✓" : n;
+      b.classList.toggle("hotovo", dite.hotovo.includes(n));
+      b.classList.toggle("vybrane", n === den);
+      b.setAttribute("aria-label", n + ". prosince");
+      b.onclick = () => {
+        den = n;
+        $("hra-heslo").value = "";
+        zprava("");
+        zobraz();
+      };
+      okna.appendChild(b);
+    }
+  }
+
+  $("hra-pridat").onclick = () => {
+    const jmeno = $("hra-jmeno").value.trim();
+    const vek = Number($("hra-vek").value);
+
+    if (!jmeno || !Number.isInteger(vek) ||
+        vek < 1 || vek > 17) {
+      alert("Vyplň jméno a věk dítěte (1–17 let).");
+      return;
+    }
+
+    const id = "d" + Date.now() +
+      Math.random().toString(36).slice(2);
+
+    deti.push({id, jmeno, vek, hotovo: []});
+    vybraneId = id;
+
+    $("hra-jmeno").value = "";
+    $("hra-vek").value = "";
+    uloz();
+    zobraz();
+  };
+
+  $("hra-dite").onchange = e => {
+    vybraneId = e.target.value;
+    den = 1;
+    zprava("");
+    zobraz();
+  };
+
+  $("hra-overit").onclick = () => {
+    const dite = aktualni();
+    if (!dite) return;
+
+    const zadane = $("hra-heslo").value
+      .trim().toUpperCase();
+
+    if (dite.hotovo.includes(den)) {
+      zprava("Toto okénko už máš odemčené.");
+      return;
+    }
+
+    // POUZE TESTOVACÍ HESLA – nejsou bezpečná.
+    if (zadane === "TEST" + den) {
+      dite.hotovo.push(den);
+      uloz();
+      $("hra-heslo").value = "";
+      zobraz();
+      zprava("✨ Správně! Okénko se rozsvítilo.");
+    } else {
+      zprava("Heslo nesouhlasí. Zkus to znovu.");
+    }
+  };
+
+  $("hra-heslo").addEventListener("keydown", e => {
+    if (e.key === "Enter") $("hra-overit").click();
+  });
+
+  $("hra-tisknout").onclick = () => window.print();
+
+  const tisk = $("tisk-policka");
+  for (let n = 1; n <= 24; n++) {
+    const policko = document.createElement("div");
+    policko.className = "tisk-policko";
+    policko.textContent = n + ". 12.";
+    tisk.appendChild(policko);
+  }
+
+  zobraz();
+})();
+</script>
+<!-- KONEC DĚTSKÉ HRY -->
+
 </body>
 </html>
