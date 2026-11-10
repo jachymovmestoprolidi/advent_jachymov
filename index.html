@@ -1,0 +1,49 @@
+
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Živý adventní kalendář Jáchymova 2026</title>
+  <style>
+    body {
+      margin: 0;
+      background: #16364a;
+      color: white;
+      font-family: Arial, sans-serif;
+      text-align: center;
+      padding: 30px 16px;
+    }
+    h1 { color: #f5d99b; }
+    .okna {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 12px;
+      max-width: 500px;
+      margin: 30px auto;
+    }
+    .okno {
+      padding: 20px 5px;
+      background: #345e73;
+      border-radius: 12px;
+      font-size: 24px;
+    }
+  </style>
+</head>
+<body>
+  <h1>🎄 Živý adventní kalendář Jáchymova</h1>
+  <p>1.–24. prosince 2026</p>
+  <p>24 dní, 24 míst, 24 adventních překvapení</p>
+  <div class="okna" id="okna"></div>
+  <p>Brzy společně otevřeme první okénko!</p>
+  <script>
+    const okna = document.getElementById("okna");
+    for (let den = 1; den <= 24; den++) {
+      const okno = document.createElement("div");
+      okno.className = "okno";
+      okno.textContent = den;
+      okna.appendChild(okno);
+    }
+  </script>
+</body>
+</html>
