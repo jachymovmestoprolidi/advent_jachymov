@@ -618,18 +618,24 @@ navigation.forEach((p,i) => {
 
 <!-- AUTOMATICKÉ ROZSVĚCENÍ ADVENTNÍCH OKEN -->
 <style>
-  .advent-svetlo {
-    position: absolute;
-    z-index: 2;
-    pointer-events: none;
-    border-radius: 8px;
-    background: rgba(255, 195, 70, .28);
-    box-shadow:
-      0 0 12px 5px rgba(255, 192, 67, .48),
-      0 0 28px 12px rgba(255, 171, 45, .22),
-      inset 0 0 15px rgba(255, 239, 160, .55);
-    mix-blend-mode: screen;
-  }
+  
+.advent-svetlo {
+  position: absolute;
+  z-index: 2;
+  pointer-events: none;
+  border-radius: 8px;
+
+  background: rgba(255, 202, 85, 0.60);
+
+  box-shadow:
+    0 0 12px 6px rgba(255, 225, 115, 0.95),
+    0 0 28px 13px rgba(255, 185, 45, 0.70),
+    0 0 48px 20px rgba(255, 160, 30, 0.35),
+    inset 0 0 20px rgba(255, 250, 185, 0.90);
+
+  mix-blend-mode: screen;
+}
+
 
   .advent-svetlo.dnes {
     animation: advent-zare 3s ease-in-out infinite;
