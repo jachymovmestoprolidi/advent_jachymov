@@ -718,5 +718,104 @@ navigation.forEach((p,i) => {
 </script>
 <!-- KONEC AUTOMATICKÉHO ROZSVĚCENÍ -->
 
+<!-- TESTOVACÍ OVLADAČ ADVENTNÍCH SVĚTEL -->
+<style>
+  #test-adventu {
+    max-width: 850px;
+    margin: 24px auto;
+    padding: 22px;
+    border: 1px solid #d9b77c;
+    border-radius: 16px;
+    background: #213d54;
+    color: #fff5e5;
+    font-family: Arial, sans-serif;
+    text-align: center;
+  }
+  #test-adventu input {
+    width: 100%;
+    max-width: 550px;
+    accent-color: #e6bd70;
+    cursor: pointer;
+  }
+  #test-adventu button {
+    padding: 10px 18px;
+    border-radius: 8px;
+    border: none;
+    cursor: pointer;
+    background: #f7e6c6;
+    color: #35291d;
+  }
+</style>
+
+<section id="test-adventu">
+  <h2>✨ Zkouška adventního rozsvěcení</h2>
+  <p>Posuň jezdec a sleduj, jak se rozsvěcí Jáchymov.</p>
+
+  <input type="range" id="test-den"
+         min="0" max="24" value="0">
+
+  <p>
+    <strong id="test-popisek">Zatím žádné okénko</strong>
+  </p>
+
+  <button type="button" id="test-vypnout">
+    Vrátit skutečné datum
+  </button>
+</section>
+
+<script>
+(() => {
+  const scena = document.getElementById("scene");
+  const jezdec = document.getElementById("test-den");
+  const popisek = document.getElementById("test-popisek");
+
+  // Převzít polohy z existujících klikacích okének.
+  const okna = [...scena.querySelectorAll(".hotspot")]
+    .filter(b => /^\d+\. prosince$/.test(b.title))
+    .sort((a,b) => parseInt(a.title) - parseInt(b.title));
+
+  function nastavSvetla(pocet) {
+    scena.querySelectorAll(".advent-svetlo")
+      .forEach(el => el.remove());
+
+    for (let i = 0; i < pocet; i++) {
+      const b = okna[i];
+      if (!b) continue;
+
+      const svetlo = document.createElement("div");
+      svetlo.className = "advent-svetlo" +
+        (i === pocet - 1 ? " dnes" : "");
+
+      svetlo.style.left = b.style.left;
+      svetlo.style.top = b.style.top;
+      svetlo.style.width = b.style.width;
+      svetlo.style.height = b.style.height;
+
+      scena.appendChild(svetlo);
+    }
+
+    popisek.textContent = pocet === 0
+      ? "Zatím žádné okénko"
+      : pocet === 24
+        ? "Štědrý den – svítí všech 24 okének!"
+        : pocet + ". prosince – svítí " +
+          pocet + " okének";
+  }
+
+  jezdec.addEventListener("input", () => {
+    nastavSvetla(Number(jezdec.value));
+  });
+
+  document.getElementById("test-vypnout")
+    .addEventListener("click", () => {
+      jezdec.value = 0;
+      nastavSvetla(0);
+      popisek.textContent =
+        "Test vypnut. Obnov stránku pro skutečné datum.";
+    });
+})();
+</script>
+<!-- KONEC TESTOVACÍHO OVLADAČE -->
+
 </body>
 </html>
