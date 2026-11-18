@@ -139,34 +139,9 @@ a { color: #ffe0a2; }
     font: 14px/1.6 Arial, sans-serif;
     color: #f0e4d3;
   }
-  #hra-tisk { display: none; }
   @media (max-width: 600px) {
     #advent-hra .hra-vstup,
     #advent-hra .hra-tisk-tlacitko { width: 100%; max-width: 360px; }
-  }
-  @media print {
-    @page { size: A5 portrait; margin: 9mm; }
-    body > *:not(#hra-tisk) { display: none !important; }
-    #hra-tisk {
-      display: block !important;
-      color: black;
-      background: white;
-      font: 12px Arial, sans-serif;
-    }
-    #hra-tisk h1 { text-align: center; font-size: 20px; }
-    .tisk-grid {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 5px;
-      margin: 15px 0;
-    }
-    .tisk-policko {
-      border: 1px solid #555;
-      height: 56px;
-      padding: 5px;
-      font-size: 13px;
-    }
-    .tisk-udaje { margin-top: 15px; line-height: 2.3; }
   }
 </style>
 
@@ -183,9 +158,12 @@ a { color: #ffe0a2; }
        target="_blank" rel="noopener noreferrer">
       🎁 Otevřít nebo založit kartičku
     </a>
-    <button class="hra-tisk-tlacitko" type="button" id="hra-tisknout">
-      🖨️ Vytisknout papírovou kartičku A5
-    </button>
+    <a class="hra-tisk-tlacitko"
+       href="Adventni_karticka_Jachymov_A4.pdf"
+       target="_blank" rel="noopener noreferrer"
+       type="application/pdf">
+      🖨️ Otevřít papírovou kartičku A4 (PDF)
+    </a>
   </div>
   <p class="hra-poznamka">
     Online kartička se otevře v nové záložce. Stačí přezdívka a věk dítěte;
@@ -194,38 +172,7 @@ a { color: #ffe0a2; }
   </p>
 </section>
 
-<!-- PAPÍROVÁ VARIANTA – zachováno tisknutí A5 -->
-<section id="hra-tisk">
-  <h1>🎄 Adventní putování Jáchymovem</h1>
-  <p>1.–24. prosince 2026</p>
-  <p>Navštiv adventní místa a zapisuj nalezená hesla.</p>
-  <div class="tisk-grid" id="tisk-policka"></div>
-  <p>
-    Za alespoň 10 nalezených hesel se můžeš
-    přihlásit do slosování 3. ledna 2027.
-  </p>
-  <div class="tisk-udaje">
-    Jméno dítěte: __________________________<br>
-    Věk dítěte: ____________________________<br>
-    Kontakt na rodiče: ______________________
-  </div>
-  <p>Místo a termín odevzdání budou upřesněny.</p>
-</section>
-
-<script>
-(() => {
-  "use strict";
-  const tisk = document.getElementById("tisk-policka");
-  for (let n = 1; n <= 24; n++) {
-    const policko = document.createElement("div");
-    policko.className = "tisk-policko";
-    policko.textContent = n + ". 12.";
-    tisk.appendChild(policko);
-  }
-  document.getElementById("hra-tisknout")
-    .addEventListener("click", () => window.print());
-})();
-</script>
+<!-- PAPÍROVÁ KARTIČKA: samostatné tiskové PDF A4, viz odkaz výše -->
 <!-- KONEC DĚTSKÉ HRY -->
 
 <section class="panel" id="program">
