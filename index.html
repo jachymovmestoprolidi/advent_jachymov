@@ -192,75 +192,316 @@ a { color: #ffe0a2; }
   nebo vyzvednout v Íčku.</p>
 </section>
 
-<dialog id="detail">
-  <button class="close" onclick="detail.close()"
-          aria-label="Zavřít">✕</button>
+<dialog id="detail" aria-labelledby="detailTitle">
+  <button class="close" type="button" onclick="detail.close()" aria-label="Zavřít podrobnosti">✕</button>
+  <p class="detail-kicker">Živý adventní kalendář Jáchymova 2026</p>
   <h2 id="detailTitle"></h2>
-  <p id="detailText"></p>
-  <p id="detailPlace"></p>
-  <p id="detailTime"></p>
-  <button onclick="detail.close()">Zavřít</button>
+  <div id="detailContent" class="detail-content"></div>
+  <div class="detail-footer">
+    <button type="button" class="detail-close" onclick="detail.close()">Zavřít okénko</button>
+  </div>
 </dialog>
+
+<style>
+/* Informace z aktuální tabulky (21. 11. 2026): přehledný detail každého adventního okénka. */
+#detail {
+  width: min(94vw, 740px);
+  max-width: 740px;
+  max-height: min(88vh, 1000px);
+  padding: 26px clamp(18px, 4vw, 38px);
+  overflow: auto;
+  box-shadow: 0 24px 70px rgba(0, 0, 0, .4);
+}
+#detail .close { font: 22px/1 Arial, sans-serif; background: #fff; border: 1px solid #b79a67; border-radius: 9px; }
+#detail .detail-kicker { color: #76552d; font: 600 13px/1.5 Arial, sans-serif; letter-spacing: .03em; margin: 0 40px 10px 0; }
+#detail #detailTitle { margin: 0 0 22px; color: #74382f; font-size: clamp(25px, 5vw, 34px); }
+#detail .detail-content { display: grid; gap: 0; margin: 0; }
+#detail .detail-item { padding: 14px 0 16px; border-top: 1px solid #ddc9a8; }
+#detail .detail-label { margin: 0 0 5px; color: #674625; font: 700 15px/1.4 Arial, sans-serif; }
+#detail .detail-value { margin: 0; color: #2c2922; font: 16px/1.65 Arial, sans-serif; white-space: pre-line; overflow-wrap: anywhere; }
+#detail a { color: #194d77; text-decoration: underline; font-weight: 600; }
+#detail a:focus-visible { outline: 3px solid #be8a20; outline-offset: 3px; }
+
+/* Samostatná pozvánka na jinou akci, oddělená od programu adventního okénka. */
+#detail .detail-invite {
+  margin: 3px 0 18px 21px;
+  padding: 11px 15px;
+  border-left: 3px solid #b89a67;
+  background: #faf1e2;
+  border-radius: 0 9px 9px 0;
+}
+#detail .detail-invite-title {
+  display: block;
+  margin-bottom: 5px;
+  color: #684927;
+  font: 700 14px/1.5 Arial, sans-serif;
+}
+#detail .detail-invite-text {
+  margin: 0;
+  color: #373029;
+  font: italic 15px/1.7 Arial, sans-serif;
+}
+
+#detail .detail-footer { margin-top: 20px; text-align: right; }
+#detail .detail-close { cursor: pointer; border-radius: 10px; border: none; background: #7e3230; color: #fff; padding: 12px 19px; font: bold 15px/1.3 Arial, sans-serif; }
+@media (max-width: 600px) {
+  #detail { padding: 20px 16px; max-height: 92vh; }
+  #detail .detail-item { padding: 11px 0 13px; }
+}
+</style>
+
 
 <script>
 const program = {
-  2: ["Vánoční fotoateliér",
-      "Prohlídka vánočního ateliéru a fotografie pro děti. Rezervace nutná.",
-      "Třída Dukelských hrdinů 334", "16:00–18:00"],
-  3: ["Klub pod Vlčí horou",
-      "Dětské úkoly, hádanky a malé pohoštění.",
-      "Náměstí Republiky 145", "16:00–18:00"],
-  4: ["Mikulášská párty",
-      "Mikulášské setkání u špitálního kostelíku.",
-      "Špitální kostelík", "Čas upřesníme"],
-  5: ["Vzhůru za Grinchem!",
-      "Vánoční dobrodružství nad Jáchymovem.",
-      "Na Svornosti, ev. č. 3", "17:00–18:00"],
-  6: ["Advent v Řetízkárně",
-      "Oheň, čaj, cukroví, přání a koledy.",
-      "Řetízkárna", "14:00–16:00"],
-  7: ["Adventní setkání",
-      "Podrobnosti programu připravujeme.",
-      "K Lanovce 1050", "15:00–17:00"],
-  9: ["Česko zpívá koledy",
-      "Společné zpívání koled.",
-      "Kostel sv. Jáchyma", "Od 18:00"],
-  10: ["Vánoční jarmark",
-       "Vánoční setkání ve škole.",
-       "ZŠ a MŠ Jáchymov", "15:30–18:30"],
-  11: ["U oveček",
-       "Adventní setkání s ovečkami. Omezená kapacita.",
-       "Suchá 132", "Čas upřesníme"],
-  12: ["Česká mše vánoční",
-       "Vánoční mše Jakuba Jana Ryby.",
-       "Špitální kostel", "Od 18:00"],
-  13: ["Lampionový průvod sv. Lucie",
-       "Adventní průvod městem.",
-       "Průvod ke kapli Jana Nepomuckého", "Čas upřesníme"],
-  16: ["Jak mumínci čekali na Vánoce",
-       "Příběh, vánoční strom a výměna malých dárečků.",
-       "Altán u hřiště před DPS", "Od 17:00"],
-  17: ["Flétnový koncert",
-       "Adventní hudební setkání.",
-       "KKC radnice", "Od 15:30"],
-  18: ["Vánoční úkol pro děti",
-       "Malý úkol s odměnou. Omezená kapacita.",
-       "Třída Čs. armády 99", "17:00–20:00"],
-  19: ["Budulínek",
-       "Pohádkové setkání v knihovně.",
-       "Městská knihovna", "Od 15:00"],
-  20: ["Koncert Pološero",
-       "Adventní koncert.",
-       "Špitální kostel", "16:00"],
-  22: ["Sousedské setkání",
-       "Adventní setkání s dětským koutkem.",
-       "Palackého 372", "Od 16:00"],
-  23: ["Advent ve Šlikově parku",
-       "Jmelí u památníku zakladatele města, koledy a pohoštění.",
-       "Šlikův park", "17:00–18:00"],
-  24: ["Betlémské světlo",
-       "Skauti přinesou Betlémské světlo na více míst ve městě.",
-       "Více míst v Jáchymově", "Časy upřesníme"]
+  "1": {
+    "organizer": "Jana Kijovská",
+    "location": "Café 1516 - Mincovní 33",
+    "description": "Keramická dílnička",
+    "timeLabel": "Svou návštěvu orientujte mezi časy:",
+    "time": "15:00–17:00 hod.",
+    "capacity": "Omezená",
+    "reservation": "Není. Kdo dřív přijde, ten dřív mele.",
+    "weather": "Akce se koná uvnitř. Špatné počasí nemá vliv na program."
+  },
+  "2": {
+    "organizer": "Dominika Dostálová",
+    "location": "Fotoateliér - Třída Dukelských hrdinů 334",
+    "description": "Prohlídka Vánočního  fotoateliéru, každé dítě odejde s jednou Vánoční fotografií.",
+    "timeLabel": "Svou návštěvu orientujte mezi časy:",
+    "time": "16:00–18:00 hod.",
+    "capacity": "Omezená",
+    "reservation": "Ano. Rezervace nutná. Hledejte ZDE",
+    "weather": "Akce se koná uvnitř. Špatné počasí nemá vliv na program.",
+    "reservationUrl": "https://dostalovaphoto.cz/rezervacni-system/"
+  },
+  "3": {
+    "organizer": "Michal Baláž a Veroniká Hůlová",
+    "location": "Radnice - náměstí Republiky 1",
+    "description": "Setkání s panem Starostou a paní Místostarostkou na radnici. Těšit se můžete na drobné úkoly.",
+    "timeLabel": "Svou návštěvu orientujte mezi časy:",
+    "time": "16:00–18:00 hod.",
+    "capacity": "Neomezená",
+    "reservation": "Není.",
+    "weather": "Akce se koná uvnitř. Špatné počasí nemá vliv na program."
+  },
+  "4": {
+    "organizer": "Hasiči",
+    "location": "Špitální kostelík - Bělohorská 714 (prostranství před budovou)",
+    "description": "16:30 – Velkolepý příjezd Mikuláše, čerta a anděla ve vánočně ozdobených vozech JSDH Jáchymov.\nVánočně nazdobená hasičská technika.\n“Fotokoutek” s velkou osvětlenou číslicí 4 a hasičskou technikou. \nStánek s občerstvením, kde si návštěvníci budou moci zakoupit svařák, další teplé nápoje, klobásu nebo párek v rohlíku.\nČaj a sladký zákusek například ke kávě zdarma. V rámci programu je možné za poplatek rezervovat také osobní setkání s Mikulášem, čerty a anděly a předání sladkého balíčku. Rezervaci je však třeba učinit nejpozději do 30.11.2026. Více informací o akci naleznete ZDE",
+    "timeLabel": "Program začíná v:",
+    "time": "16:00 hod.",
+    "capacity": "Program adventního okénka má kapacitu neomezenou, setkání s Mikulášem a jeho společníky a předání balíčku je nutno rezervovat",
+    "reservation": "Ano. Rezervace balíčku a osobního setkání s Mikulášem a spol nutná, zbytek programu bez nutnosti rezervace.",
+    "weather": "Akce se koná za každého počasí venku (sousedé se teple obléknou).",
+    "programUrl": "https://docs.google.com/forms/d/e/1FAIpQLScAzmPl9Yn5Zg3Y68P9KS-o5Emb3QRD1JE_LwLofB4oy7RRag/viewform"
+  },
+  "5": {
+    "organizer": "Milan Smolek",
+    "location": "Na Svornosti ev.č 3, posledni dům na kopci v Jáchymově (směr Boží dar), zahrada",
+    "description": "Vzhůru za Grinchem, nad Jáchymovem! Na vysokém kopci, kde Grinch svůj pelíšek má,  vánoční dobrodružství začíná!Čeká tě voňavý nealkoholický punč, posezení s vánočním Grinchem, zelené Grinchovy sušenky a kouzelný výhled na Jáchymov.Malí dobrodruzi si vyrobí vlastní lucerničku, která jim posvítí na cestu zpátky domů. Ať už je venku tma či mráz, Grinchova lucernička povede vás!",
+    "timeLabel": "Svou návštěvu orientujte mezi časy:",
+    "time": "17:00–18:00 hod.",
+    "capacity": "Neomezená",
+    "reservation": "Není.",
+    "weather": "Máme možnost se schovat (pod stříšku, do garáže, na chodbu domu)."
+  },
+  "6": {
+    "organizer": "Bára Dvořáková",
+    "location": "Řetízkárna - Rovnost",
+    "description": "Setkání u ohýnku, čaj, cukroví, zeď přání, zpívání koled.",
+    "timeLabel": "Svou návštěvu orientujte mezi časy:",
+    "time": "14:00–16:00 hod.",
+    "capacity": "Neomezená",
+    "reservation": "Není.",
+    "weather": "Akce se koná za každého počasí venku (sousedé se teple obléknou)."
+  },
+  "7": {
+    "organizer": "Lenka Galaras a Deli Tree italská sýrárna a vinotéka a Barberyně Ilonka",
+    "location": "K Lanovce 1050",
+    "description": "Sousedské setkání. Mňamky z Deli Tree. Adventní alko i nealko bar. Hra sv. Ambroše pro děti.",
+    "timeLabel": "Svou návštěvu orientujte mezi časy:",
+    "time": "15:00–17:00 hod.",
+    "capacity": "Neomezená",
+    "reservation": "Není.",
+    "weather": "Máme možnost se schovat (pod stříšku, do garáže, na chodbu domu).",
+    "extraInvite": "Zároveň vás zveme na Putování za Ježíškem, které proběhne v Kulturně krativním centru na radnici dne 10.12. Více info zde",
+    "extraInviteUrl": "https://drive.google.com/file/d/14RoyoCdn6F3JoK-kFLyFRZyoiDMVLYdm/view?usp=sharing"
+  },
+  "8": {
+    "organizer": "Íčko",
+    "location": "Radnice - náměstí Republiky 1 (KKC)",
+    "description": "Kreativní dílna. Více info ZDE",
+    "timeLabel": "Program začíná v:",
+    "time": "16:00 hod.",
+    "capacity": "Omezená",
+    "reservation": "Není. Kdo dřív přijde, ten dřív mele.",
+    "weather": "Akce se koná uvnitř. Špatné počasí nemá vliv na program.",
+    "programUrl": "https://drive.google.com/file/d/12PmheJZvQj5LWHEeB_haP2VnF1t7eKWi/view?usp=sharing"
+  },
+  "9": {
+    "organizer": "Íčko",
+    "location": "Kostel sv. Jáchyma - náměstí Republiky",
+    "description": "Česko zpívá koledy. Více informací ZDE",
+    "timeLabel": "Program začíná v:",
+    "time": "18:00 hod.",
+    "capacity": "Neomezená",
+    "reservation": "Není.",
+    "weather": "Akce se koná uvnitř. Špatné počasí nemá vliv na program.",
+    "programUrl": "https://drive.google.com/file/d/1kbqviH3G4OlcOgOnOw4cvKWHm7TRhnC-/view?usp=sharing"
+  },
+  "10": {
+    "organizer": "ZŠ a MŠ",
+    "location": "Husova 992 - ZŠ M.C.Sklodowské a MŠ Jáchymov",
+    "description": "Vánoční jarmark",
+    "timeLabel": "Svou návštěvu orientujte mezi časy:",
+    "time": "15:30–18:30 hod.",
+    "capacity": "Neomezená",
+    "reservation": "Není.",
+    "weather": "Akce se koná uvnitř. Špatné počasí nemá vliv na program."
+  },
+  "11": {
+    "organizer": "Zorka Sopková",
+    "location": "Suchá 132 - U oveček.",
+    "description": "Setkání u oveček - PROGRAM TAJNÝ",
+    "timeLabel": "Svou návštěvu orientujte mezi časy:",
+    "time": "16:00–18:00 hod.",
+    "capacity": "Neomezená",
+    "reservation": "Není.",
+    "weather": "V případě silného deště/sněžení bychom museli akci zrušit."
+  },
+  "12": {
+    "organizer": "Íčko",
+    "location": "Špitální kostelík - Bělohorská 714",
+    "description": "Česká mše vánoční J.J.Ryby. Více informací ZDE",
+    "timeLabel": "Program začíná v:",
+    "time": "18:00 hod.",
+    "capacity": "Omezená",
+    "reservation": "Není. Kdo dřív přijde, ten dřív mele.",
+    "weather": "Akce se koná uvnitř. Špatné počasí nemá vliv na program.",
+    "programUrl": "https://drive.google.com/file/d/1F0WN99Wlj3t7hmjAVXzyfcyoWNd24g_O/view?usp=sharing"
+  },
+  "13": {
+    "organizer": "Íčko",
+    "location": "Náměstí Republiky (před budovou radnice)",
+    "description": "Lampionový průvod v čele se sv. Lucií a její družinou, který povede přes krmelec až na Klobouk.",
+    "timeLabel": "Program začíná v:",
+    "time": "16:00 hod.",
+    "capacity": "Neomezená",
+    "reservation": "Není.",
+    "weather": "V případě špatného počasí akci přesuneme do prostor KKC, tentokrát bez lampionů. Čeká nás povídání o sv. Lucii, tradicích a všem, co k Lucii patří, a to přímo se sv. Lucií."
+  },
+  "14": {
+    "organizer": "Milada Palánová",
+    "location": "Evangelický kostelík, Mincovní 681",
+    "description": "Krátký vánoční příběh z Jáchymova a malý úkol pro děti.",
+    "timeLabel": "Program začíná v:",
+    "time": "18:00 hod.",
+    "capacity": "Omezená",
+    "reservation": "Není. Kdo dřív přijde, ten dřív mele.",
+    "weather": "Akce se koná uvnitř. Špatné počasí nemá vliv na program."
+  },
+  "15": {
+    "organizer": "Školní jídelna",
+    "location": "Husova 992 - ZŠ M.C.Sklodowské a MŠ Jáchymov (jídelna)",
+    "description": "Pokec u čaje s vánočkou, poslech koled, volná zábava :-)",
+    "timeLabel": "Svou návštěvu orientujte mezi časy:",
+    "time": "16:00–18:00 hod.",
+    "capacity": "Neomezená",
+    "reservation": "Není.",
+    "weather": "Akce se koná uvnitř. Špatné počasí nemá vliv na program."
+  },
+  "16": {
+    "organizer": "Ladislava Kulhavá",
+    "location": "Na Slovanech - Altánek na hřišti před DPS",
+    "description": "Stromeček,pohádka Jak mumínci čekali na vánoce. PŘINES MALÝ DÁREČEK POD NÁŠ STROMEČEK (vezmi si jiný)",
+    "timeLabel": "Program začíná v:",
+    "time": "17:00 hod.",
+    "capacity": "Neomezená",
+    "reservation": "Není.",
+    "weather": "Máme možnost se schovat (pod stříšku, do garáže, na chodbu domu)."
+  },
+  "17": {
+    "organizer": "Štěpánka Hamar, ZUŠ Ostrov – pobočka v ZŠ Jáchymov (flétny)",
+    "location": "Radnice - náměstí Republiky 1 (KKC)",
+    "description": "Flétnový koncert",
+    "timeLabel": "Program začíná v:",
+    "time": "15:30 hod.",
+    "capacity": "Omezená",
+    "reservation": "Není. Kdo dřív přijde, ten dřív mele.",
+    "weather": "Akce se koná uvnitř. Špatné počasí nemá vliv na program."
+  },
+  "18": {
+    "organizer": "Simona Ciprianová",
+    "location": "Třída Čs. armády 99",
+    "description": "Drobný úkol pro děti s odměnou.",
+    "timeLabel": "Svou návštěvu orientujte mezi časy:",
+    "time": "18:00–19:30 hod.",
+    "capacity": "Omezená",
+    "reservation": "Není. Kdo dřív přijde, ten dřív mele.",
+    "weather": "V případě silného deště/sněžení bychom museli akci zrušit."
+  },
+  "19": {
+    "organizer": "Íčko",
+    "location": "Radnice - náměstí Republiky 1",
+    "description": "Pohádka o Budulínkovi. Více informací ZDE",
+    "timeLabel": "Program začíná v:",
+    "time": "15:00 hod.",
+    "capacity": "Omezená",
+    "reservation": "Není. Kdo dřív přijde, ten dřív mele.",
+    "weather": "Akce se koná uvnitř. Špatné počasí nemá vliv na program.",
+    "programUrl": "https://drive.google.com/file/d/16mHBYFcrBzzpi9R1cxfHuBOsANhsfdgO/view?usp=sharing"
+  },
+  "20": {
+    "organizer": "Íčko",
+    "location": "Špitální kostelík - Bělohorská 714",
+    "description": "Pološero - koncert. Více informací ZDE",
+    "timeLabel": "Program začíná v:",
+    "time": "16:00 hod.",
+    "capacity": "Omezená",
+    "reservation": "Není. Kdo dřív přijde, ten dřív mele.",
+    "weather": "Akce se koná uvnitř. Špatné počasí nemá vliv na program.",
+    "programUrl": "https://drive.google.com/file/d/1WvRH7UQoJUGoz9dM7DMTgLWVN8MTsXOV/view?usp=sharing"
+  },
+  "21": {
+    "organizer": "Klub pod Vlčí horou",
+    "location": "Náměstí Republiky 145 - (REGENT)",
+    "description": "Úkoly pro děti, hádanky a určitě něco dobrého:)",
+    "timeLabel": "Svou návštěvu orientujte mezi časy:",
+    "time": "16:00–18:00 hod.",
+    "capacity": "Neomezená",
+    "reservation": "Není.",
+    "weather": "Akce se koná uvnitř. Špatné počasí nemá vliv na program."
+  },
+  "22": {
+    "organizer": "David Svoboda",
+    "location": "Dvořákova 643 - Taverna Terasa",
+    "description": "Klasické Vánoční setkání se Svařákem a buřtíkem :-D",
+    "timeLabel": "Program začíná v:",
+    "time": "18:00 hod.",
+    "capacity": "Neomezená",
+    "reservation": "Není.",
+    "weather": "Akce se koná uvnitř. Špatné počasí nemá vliv na program."
+  },
+  "23": {
+    "organizer": "Jaroslav Kulhavý",
+    "location": "Tř. Dukelských hrdinů - Pomník Štěpána Šlika",
+    "description": "Položeni větvičky jmeli u památniku zakladatele města, společne zpívaní koled, malé občerstvení",
+    "timeLabel": "Svou návštěvu orientujte mezi časy:",
+    "time": "17:00–18:00 hod.",
+    "capacity": "Neomezená",
+    "reservation": "Není.",
+    "weather": "Akce se koná za každého počasí venku (sousedé se teple obléknou)."
+  },
+  "24": {
+    "organizer": "Junák - středisko Arnika Jáchymov",
+    "location": "Tř. Dukelských hrdinů 1031 - Před budovou zdravotního střediska",
+    "description": "Betlémské světlo v Jáchymově - přijďte si na Štědrý den se svou lucerničkou nebo svíčkou pro plamínek Betlémského světla...",
+    "timeLabel": "Svou návštěvu orientujte mezi časy:",
+    "time": "9:00–9:30 hod.",
+    "capacity": "Neomezená",
+    "reservation": "Není.",
+    "weather": "Akce se koná za každého počasí venku (sousedé se teple obléknou)."
+  }
 };
 
 const positions = {
@@ -281,17 +522,72 @@ const positions = {
 const scene = document.getElementById("scene");
 const detail = document.getElementById("detail");
 
+function vlozTextSPripadnymOdkazem(cil, text, url) {
+  // Původní odkazy označené „ZDE“ zůstávají klikací.
+  const casti = String(text || "").split(/(ZDE)/gi);
+  casti.forEach(cast => {
+    if (/^zde$/i.test(cast) && url && /^https?:\/\//i.test(url)) {
+      const a = document.createElement("a");
+      a.href = url;
+      a.textContent = cast;
+      a.target = "_blank";
+      a.rel = "noopener noreferrer";
+      a.setAttribute("aria-label", "Otevřít další informace v nové záložce");
+      cil.appendChild(a);
+    } else {
+      cil.appendChild(document.createTextNode(cast));
+    }
+  });
+}
+
+function detailRadek(label, value, url) {
+  const container = document.getElementById("detailContent");
+  const wrap = document.createElement("div");
+  wrap.className = "detail-item";
+  const heading = document.createElement("p");
+  heading.className = "detail-label";
+  heading.textContent = label;
+  const content = document.createElement("p");
+  content.className = "detail-value";
+  vlozTextSPripadnymOdkazem(content, value, url);
+  wrap.appendChild(heading);
+  wrap.appendChild(content);
+  container.appendChild(wrap);
+}
+
+
+function detailSamostatnaPozvanka(text, url) {
+  const container = document.getElementById("detailContent");
+  const wrap = document.createElement("aside");
+  wrap.className = "detail-invite";
+  const title = document.createElement("strong");
+  title.className = "detail-invite-title";
+  title.textContent = "Pozvánka na další akci (mimo dnešní adventní okénko):";
+  const paragraph = document.createElement("p");
+  paragraph.className = "detail-invite-text";
+  vlozTextSPripadnymOdkazem(paragraph, text, url);
+  wrap.append(title, paragraph);
+  container.appendChild(wrap);
+}
+
 function openDay(n) {
   const item = program[n];
-  document.getElementById("detailTitle").textContent =
-    n + ". prosince 2026";
-  document.getElementById("detailText").textContent =
-    item ? item[0] + " – " + item[1] :
-    "Program tohoto dne zatím připravujeme.";
-  document.getElementById("detailPlace").textContent =
-    item ? "📍 " + item[2] : "";
-  document.getElementById("detailTime").textContent =
-    item ? "🕒 " + item[3] : "";
+  const container = document.getElementById("detailContent");
+  container.replaceChildren();
+  document.getElementById("detailTitle").textContent = n + ". prosince 2026";
+  if (!item) {
+    detailRadek("Program", "Podrobnosti tohoto dne zatím připravujeme.");
+    detail.showModal();
+    return;
+  }
+  detailRadek("Kdo akci pořádá:", item.organizer);
+  detailRadek("Kde dnešní adventní políčko najdete:", item.location);
+  detailRadek("Na co se můžete těšit:", item.description, item.programUrl);
+  if (item.extraInvite) detailSamostatnaPozvanka(item.extraInvite, item.extraInviteUrl);
+  detailRadek(item.timeLabel, item.time);
+  detailRadek("Informace o kapacitě:", item.capacity);
+  detailRadek("Je rezervace programu nutná?", item.reservation, item.reservationUrl);
+  detailRadek("Důležité info pro případ špatného počasí:", item.weather);
   detail.showModal();
 }
 
