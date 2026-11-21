@@ -90,23 +90,51 @@ a { color: #ffe0a2; }
   <img src="Živý adventní kalendář Jáchymova.png"
        alt="Zasněžený Jáchymov s 24 adventními okénky">
 
-  <!-- Titulek druhého navigačního tlačítka je v původním obrázku součástí fotografie.
-       Překryjeme pouze tuto malou plochu; samotný PNG obraz se NEMĚNÍ. -->
+  <!-- Jednotné označení čtyř původních ilustrovaných tlačítek.
+       Původní obrázek je zachován 1:1 a zůstává beze změny.
+       Textové štítky a ikona hrací kartičky jsou pouze průhlednou vrstvou nad ním. -->
   <svg class="nav-karticka-napis" viewBox="0 0 1672 941" preserveAspectRatio="none" aria-hidden="true" focusable="false">
     <defs>
-      <linearGradient id="pozadi-karticky" x1="0" x2="1" y1="0" y2="0">
-        <stop offset="0%" stop-color="#f5ddc3"/>
-        <stop offset="50%" stop-color="#f7e2ca"/>
-        <stop offset="100%" stop-color="#f1d5b8"/>
+      <linearGradient id="nav-papir" x1="0" x2="1" y1="0" y2="0">
+        <stop offset="0%" stop-color="#f3d8bd"/>
+        <stop offset="50%" stop-color="#f9e5cf"/>
+        <stop offset="100%" stop-color="#f2d7b9"/>
       </linearGradient>
     </defs>
-    <rect x="614" y="817" width="190" height="65" rx="6" fill="url(#pozadi-karticky)" />
-    <text x="626" y="844" fill="#392019" font-family="Georgia, 'Times New Roman', serif" font-size="20" font-weight="bold">TVOJE HRACÍ</text>
-    <text x="626" y="868" fill="#392019" font-family="Georgia, 'Times New Roman', serif" font-size="23" font-weight="bold">KARTIČKA</text>
-    <!-- Překrytí původního textu „Mapa Jáchymova“ pouze v rámci třetího tlačítka. -->
-    <rect x="951" y="813" width="229" height="69" rx="4" fill="url(#pozadi-karticky)" />
-    <text x="966" y="846" fill="#392019" font-family="Georgia, 'Times New Roman', serif" font-size="26" font-weight="bold">Navigace</text>
-    <text x="966" y="871" fill="#392019" font-family="Georgia, 'Times New Roman', serif" font-size="17">Kudy k adventnímu okénku</text>
+    <!-- Překrytí původních různě velkých nápisů. Rámečky a kresba pod nimi zůstávají. -->
+    <g fill="url(#nav-papir)">
+      <rect x="226" y="813" width="227" height="82" rx="4"/>
+      <rect x="610" y="812" width="204" height="83" rx="4"/>
+      <rect x="945" y="812" width="229" height="83" rx="4"/>
+      <rect x="1298" y="812" width="237" height="83" rx="4"/>
+      <!-- Původní ikonu kalendáře u druhého tlačítka nahrazuje kartička s hvězdičkou. -->
+      <rect x="532" y="815" width="74" height="76" rx="8"/>
+    </g>
+    <!-- Nová ikona: hrací kartička s hvězdičkou, bez změny podkladové ilustrace. -->
+    <g fill="none" stroke="#62281d" stroke-width="4" stroke-linecap="round" stroke-linejoin="round">
+      <rect x="541" y="831" width="57" height="43" rx="5"/>
+      <path d="M552 841 L553 837 Q555 834 558 834" stroke-width="2.5"/>
+      <path d="M559.5 839 L563.5 847 L572.5 848 L566 854 L568 862 L559.5 858 L552 862 L553.5 854 L547 848 L556 847 Z" fill="#bd8841" stroke-width="2.3"/>
+      <path d="M576 846 H591 M576 855 H590 M550 869 H591" stroke-width="2.7"/>
+    </g>
+    <!-- Ve všech čtyřech tlačítkách stejný font, velikost titulků (22) i popisků (16). -->
+    <g fill="#392019" font-family="Georgia, 'Times New Roman', serif">
+      <g font-size="22" font-weight="bold">
+        <text x="234" y="839">Adventní kalendář</text>
+        <text x="618" y="833">Tvoje hrací</text>
+        <text x="618" y="855">kartička</text>
+        <text x="955" y="839">Navigace</text>
+        <text x="1307" y="833">Praktické</text>
+        <text x="1307" y="855">informace</text>
+      </g>
+      <g font-size="16" font-weight="normal">
+        <text x="234" y="865">Otevírejte okénka</text>
+        <text x="234" y="883">od 1. do 24. prosince</text>
+        <text x="618" y="883">Vaše adventní hra</text>
+        <text x="955" y="871">Kudy k adventnímu okénku</text>
+        <text x="1307" y="883">Časy, rezervace, aktuality</text>
+      </g>
+    </g>
   </svg>
 </div>
 
@@ -426,7 +454,7 @@ a { color: #ffe0a2; }
       <div class="mapa-karta-text">
         <h3 class="mapa-karta-h">16. prosince 2026</h3>
         <p class="mapa-karta-misto">Na Slovanech - Altánek na hřišti před DPS</p>
-        <a class="mapa-karta-odkaz" href="https://maps.app.goo.gl/Na9s5nDZ5HFuJg6k9" target="_blank" rel="noopener noreferrer" aria-label="Otevřít 16. prosinec – Na Slovanech - Altánek na hřišti před DPS v Google Mapách">📍 Otevřít v Google Mapách</a>
+        <a class="mapa-karta-odkaz" href="https://maps.app.goo.gl/dm52phfKxJTaqVX38" target="_blank" rel="noopener noreferrer" aria-label="Otevřít 16. prosinec – Na Slovanech - Altánek na hřišti před DPS v Google Mapách">📍 Otevřít v Google Mapách</a>
       </div>
     </article>
     <article class="mapa-karta" id="mapa-den-17">
@@ -470,7 +498,7 @@ a { color: #ffe0a2; }
       <div class="mapa-karta-text">
         <h3 class="mapa-karta-h">21. prosince 2026</h3>
         <p class="mapa-karta-misto">Náměstí Republiky 145 - (REGENT)</p>
-        <small class="mapa-karta-poznamka">Umístění je orientační – ověřte místo v programu dne.</small>
+
         <a class="mapa-karta-odkaz" href="https://www.google.com/maps/search/?api=1&amp;query=N%C3%A1m%C4%9Bst%C3%AD%20Republiky%20145%20-%20%28REGENT%29%2C%20J%C3%A1chymov%2C%20%C4%8Cesk%C3%A1%20republika" target="_blank" rel="noopener noreferrer" aria-label="Otevřít 21. prosinec – Náměstí Republiky 145 - (REGENT) v Google Mapách">📍 Otevřít v Google Mapách</a>
       </div>
     </article>
@@ -479,7 +507,7 @@ a { color: #ffe0a2; }
       <div class="mapa-karta-text">
         <h3 class="mapa-karta-h">22. prosince 2026</h3>
         <p class="mapa-karta-misto">Dvořákova 643 - Taverna Terasa</p>
-        <small class="mapa-karta-poznamka">Umístění je orientační – ověřte místo v programu dne.</small>
+
         <a class="mapa-karta-odkaz" href="https://www.google.com/maps/search/?api=1&amp;query=Dvo%C5%99%C3%A1kova%20643%20-%20Taverna%20Terasa%2C%20J%C3%A1chymov%2C%20%C4%8Cesk%C3%A1%20republika" target="_blank" rel="noopener noreferrer" aria-label="Otevřít 22. prosinec – Dvořákova 643 - Taverna Terasa v Google Mapách">📍 Otevřít v Google Mapách</a>
       </div>
     </article>
@@ -502,7 +530,7 @@ a { color: #ffe0a2; }
       </div>
     </article>
   </div>
-  <p class="mapa-upozorneni">U 21. a 22. prosince je lokalita v podkladech pouze orientační; u těchto dnů odkaz vyhledává název nebo adresu, nikoli předstíraně přesný bod. Před cestou si ověřte místo setkání v programu příslušného okénka.</p>
+
 </section>
 
 <section class="panel" id="informace">
@@ -933,22 +961,22 @@ for (let n = 1; n <= 24; n++) {
 }
 
 // Klikací oblasti čtyř tlačítek na spodku původní ilustrace.
-const ODKAZ_HRACI_KARTICKY = "https://script.google.com/macros/s/AKfycbzhx3HrJVUkCfvdB-8pZvlAbg67nvWop9bvnNP0UoJChnQmWeml8rdQFrGzUoxvhokJ/exec?akce=hra";
+// Druhé tlačítko pouze posune stránku k nabídce dětských kartiček.
 const navigation = [
   [18, 91, "#scene"],
-  [39, 91, ODKAZ_HRACI_KARTICKY],
-  [61, 91, "#mapa"], // Mapa všech 24 adventních lokalit.
+  [39, 91, "#advent-hra"],
+  [61, 91, "#mapa"],
   [82, 91, "#informace"]
 ];
 const labels = [
-  "Adventní kalendář",
-  "Tvoje hrací kartička – otevřít online hru v nové záložce",
-  "Navigace – odkazy do Google Map",
-  "Praktické informace"
+  "Adventní kalendář – návrat k okénkům",
+  "Tvoje hrací kartička – přejít na výběr online nebo papírové kartičky",
+  "Navigace – přejít k adresám adventních zastavení",
+  "Praktické informace – přejít na informace pro návštěvníky"
 ];
 navigation.forEach((p, i) => {
-  // Druhé tlačítko je skutečný odkaz, přístupný i z klávesnice.
-  const b = document.createElement(i === 1 ? "a" : "button");
+  const b = document.createElement("button");
+  b.type = "button";
   b.className = "hotspot";
   b.style.left = (p[0] - 10) + "%";
   b.style.top = (p[1] - 5) + "%";
@@ -956,16 +984,10 @@ navigation.forEach((p, i) => {
   b.style.height = "10%";
   b.setAttribute("aria-label", labels[i]);
   b.title = labels[i];
-  if (i === 1) {
-    b.href = p[2];
-    b.target = "_blank";
-    b.rel = "noopener noreferrer";
-  } else {
-    b.type = "button";
-    b.onclick = () => {
-      document.querySelector(p[2]).scrollIntoView({ behavior: "smooth" });
-    };
-  }
+  b.onclick = () => {
+    const cil = document.querySelector(p[2]);
+    if (cil) cil.scrollIntoView({ behavior: "smooth", block: "start" });
+  };
   scene.appendChild(b);
 });
 </script>
