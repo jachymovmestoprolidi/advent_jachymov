@@ -68,6 +68,20 @@ a { color: #ffe0a2; }
   .panel { margin: 12px; padding: 16px; }
   .hotspot { border-radius: 2px; }
 }
+
+/* Překrytí POUZE nápisu druhého tlačítka, nikoli úprava obrázku města.
+   Souřadnice SVG odpovídají původnímu obrázku 1672 × 941 px.
+   Podkladovou PNG ilustraci neměníme. */
+.nav-karticka-napis {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 1;
+}
+/* Podsvícení kalendáře nebrání klikání na okénka ani na navigaci. */
+.hotspot { z-index: 3; }
 </style>
 </head>
 <body>
@@ -75,6 +89,21 @@ a { color: #ffe0a2; }
 <div class="scene" id="scene">
   <img src="Živý adventní kalendář Jáchymova.png"
        alt="Zasněžený Jáchymov s 24 adventními okénky">
+
+  <!-- Titulek druhého navigačního tlačítka je v původním obrázku součástí fotografie.
+       Překryjeme pouze tuto malou plochu; samotný PNG obraz se NEMĚNÍ. -->
+  <svg class="nav-karticka-napis" viewBox="0 0 1672 941" preserveAspectRatio="none" aria-hidden="true" focusable="false">
+    <defs>
+      <linearGradient id="pozadi-karticky" x1="0" x2="1" y1="0" y2="0">
+        <stop offset="0%" stop-color="#f5ddc3"/>
+        <stop offset="50%" stop-color="#f7e2ca"/>
+        <stop offset="100%" stop-color="#f1d5b8"/>
+      </linearGradient>
+    </defs>
+    <rect x="614" y="817" width="190" height="65" rx="6" fill="url(#pozadi-karticky)" />
+    <text x="626" y="844" fill="#392019" font-family="Georgia, 'Times New Roman', serif" font-size="20" font-weight="bold">TVOJE HRACÍ</text>
+    <text x="626" y="868" fill="#392019" font-family="Georgia, 'Times New Roman', serif" font-size="23" font-weight="bold">KARTIČKA</text>
+  </svg>
 </div>
 
 <!-- DĚTSKÁ ADVENTNÍ HRA – ODKAZ NA SKUTEČNOU KARTIČKU -->
@@ -605,35 +634,40 @@ for (let n = 1; n <= 24; n++) {
   scene.appendChild(b);
 }
 
-// Klikací oblasti čtyř tlačítek na spodku ilustrace.
+// Klikací oblasti čtyř tlačítek na spodku původní ilustrace.
+const ODKAZ_HRACI_KARTICKY = "https://script.google.com/macros/s/AKfycbzhx3HrJVUkCfvdB-8pZvlAbg67nvWop9bvnNP0UoJChnQmWeml8rdQFrGzUoxvhokJ/exec?akce=hra";
 const navigation = [
-  // Dny i program zůstávají dostupné kliknutím na okénka v ilustraci.
-  [18,91,"#scene"],
-  [39,91,"#scene"],
-  [61,91,"#scene"],
-  [82,91,"#informace"]
+  [18, 91, "#scene"],
+  [39, 91, ODKAZ_HRACI_KARTICKY],
+  [61, 91, "#scene"], // Mapa bude doplněna později.
+  [82, 91, "#informace"]
 ];
-
 const labels = [
   "Adventní kalendář",
-  "Program",
-  "Mapa Jáchymova – přehled míst",
+  "Tvoje hrací kartička – otevřít online hru v nové záložce",
+  "Mapa Jáchymova – připravujeme",
   "Praktické informace"
 ];
-
-navigation.forEach((p,i) => {
-  const b = document.createElement("button");
+navigation.forEach((p, i) => {
+  // Druhé tlačítko je skutečný odkaz, přístupný i z klávesnice.
+  const b = document.createElement(i === 1 ? "a" : "button");
   b.className = "hotspot";
-  b.style.left = (p[0]-10) + "%";
-  b.style.top = (p[1]-5) + "%";
+  b.style.left = (p[0] - 10) + "%";
+  b.style.top = (p[1] - 5) + "%";
   b.style.width = "20%";
   b.style.height = "10%";
-  b.setAttribute("aria-label",labels[i]);
-  b.onclick = () => {
-    document.querySelector(p[2]).scrollIntoView({
-      behavior:"smooth"
-    });
-  };
+  b.setAttribute("aria-label", labels[i]);
+  b.title = labels[i];
+  if (i === 1) {
+    b.href = p[2];
+    b.target = "_blank";
+    b.rel = "noopener noreferrer";
+  } else {
+    b.type = "button";
+    b.onclick = () => {
+      document.querySelector(p[2]).scrollIntoView({ behavior: "smooth" });
+    };
+  }
   scene.appendChild(b);
 });
 </script>
