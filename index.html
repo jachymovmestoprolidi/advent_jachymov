@@ -211,52 +211,70 @@ a { color: #ffe0a2; }
 
 
 <style>
-/* Interaktivní mapa je samostatný blok. Nedotýká se původní grafiky okének. */
-.mapa-panel { max-width: 1150px; }
+/* Mapa: přehledná navigace po jednotlivých dnech. Ilustrace kalendáře beze změny. */
+.mapa-panel { max-width: 1160px; }
 .mapa-panel h2 { margin-top: 0; }
-.mapa-uvod { line-height: 1.6; }
-.mapa-rozlozeni { display: grid; grid-template-columns: minmax(0, 1.65fr) minmax(260px, 1fr); gap: 15px; align-items: stretch; }
-#advent-mapa { position: relative; height: 570px; min-width: 0; border: 2px solid #d6b477; border-radius: 14px; overflow: hidden; background: #e7eae2; color: #2c2c2c; font-family: Arial, sans-serif; }
-.mapa-nacita { padding: 28px; text-align: center; line-height: 1.6; }
-.mapa-seznam { height: 570px; min-width: 0; overflow-y: auto; border: 1px solid #9d8667; border-radius: 14px; background: #fff7e9; color: #34291e; font-family: Arial, sans-serif; }
-.mapa-den { display: flex; align-items: flex-start; gap: 10px; padding: 13px 12px; border-bottom: 1px solid #e6d8c5; }
+.mapa-uvod { line-height: 1.65; }
+.mapa-lista { display: flex; gap: 11px; flex-wrap: wrap; align-items: center; margin: 20px 0 15px; }
+.mapa-lista label { font: 700 15px/1.5 Arial, sans-serif; color: #fff1d5; }
+.mapa-lista select, .mapa-lista button { border-radius: 9px; border: 1px solid #d7b778; padding: 11px 12px; font: 600 15px Arial, sans-serif; background: #fff8ea; color: #33271c; max-width: 100%; cursor: pointer; }
+.mapa-lista select { min-width: 180px; flex: 1 1 200px; }
+.mapa-lista button { background: #eac68b; }
+.mapa-lista button:hover, .mapa-lista select:hover { background: #fff; }
+.mapa-lista button:focus-visible, .mapa-lista select:focus-visible { outline: 3px solid #ffecb1; outline-offset: 3px; }
+.mapa-rozlozeni { display: grid; grid-template-columns: minmax(0, 1.55fr) minmax(275px, 1fr); gap: 15px; align-items: stretch; }
+#advent-mapa { position: relative; height: 580px; min-width: 0; border: 2px solid #d6b477; border-radius: 14px; overflow: hidden; background: #e7eae2; color: #2c2c2c; font-family: Arial, sans-serif; }
+.mapa-nacita { padding: 30px 22px; text-align: center; line-height: 1.6; }
+.mapa-seznam { height: 580px; min-width: 0; overflow-y: auto; border: 1px solid #9d8667; border-radius: 14px; background: #fff7e9; color: #34291e; font-family: Arial, sans-serif; }
+.mapa-den { display: flex; align-items: flex-start; gap: 10px; padding: 11px; border-bottom: 1px solid #e6d8c5; transition: background .15s ease; }
 .mapa-den:last-child { border-bottom: none; }
-.mapa-cislo { background: #8e3434; border-radius: 100%; color: white; font-weight: 700; min-width: 38px; width: 38px; height: 38px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.mapa-den.aktivni { background: #f4dfbc; border-left: 4px solid #a13c35; padding-left: 7px; }
+.mapa-cislo { background: #8e3434; border: none; border-radius: 100%; color: #fff; font: 700 17px/1 Arial, sans-serif; min-width: 42px; width: 42px; height: 42px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; cursor: pointer; }
 .mapa-den-info { display: grid; gap: 5px; min-width: 0; flex: 1; }
-.mapa-misto { font-size: 14px; line-height: 1.4; overflow-wrap: anywhere; }
+.mapa-misto { font-size: 14px; line-height: 1.45; overflow-wrap: anywhere; }
 .mapa-ovladani { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
-.mapa-ovladani button, .mapa-ovladani a { border-radius: 6px; font: 700 12px/1.25 Arial, sans-serif; border: 1px solid #8c6b47; background: #f8e0b3; color: #3c2d1f; padding: 7px 9px; text-decoration: none; cursor: pointer; }
+.mapa-ovladani button, .mapa-ovladani a { border-radius: 7px; font: 700 12px/1.25 Arial, sans-serif; border: 1px solid #8c6b47; background: #f8e0b3; color: #3c2d1f; padding: 8px 9px; text-decoration: none; cursor: pointer; }
 .mapa-ovladani a { background: white; }
-.mapa-ovladani button:focus-visible, .mapa-ovladani a:focus-visible { outline: 3px solid #a85023; outline-offset: 2px; }
+.mapa-cislo:focus-visible, .mapa-ovladani button:focus-visible, .mapa-ovladani a:focus-visible { outline: 3px solid #a85023; outline-offset: 2px; }
 .mapa-orientacni { font: italic 12px/1.4 Arial, sans-serif; color: #8e3434; }
-.mapa-upozorneni { font: 13px/1.6 Arial, sans-serif; color: #e6d7c0; margin-bottom: 0; }
-.mapa-pin-wrap { background: transparent; border: 0; }
-.mapa-pin { display: flex; align-items: center; justify-content: center; padding: 4px 7px; background: #8e3434; color: #fff; border: 2px solid #fff3dd; box-shadow: 0 2px 9px #2632447f; border-radius: 999px; white-space: nowrap; font: 700 13px/1 Arial, sans-serif; transform: translate(-50%, -50%); }
+.mapa-popis-vyberu { margin: 0 0 15px; padding: 13px 16px; border: 1px solid #cfb781; border-radius: 10px; background: #344f65; color: #fff; font: 14px/1.55 Arial, sans-serif; }
+.mapa-popis-vyberu strong { color: #ffe6a2; }
+.mapa-upozorneni { font: 13px/1.65 Arial, sans-serif; color: #e6d7c0; margin-bottom: 0; }
 .mapa-popup { color: #302519; font: 14px/1.5 Arial, sans-serif; }
 .mapa-popup h3 { color: #742d2d; margin: 0 0 7px; font-size: 16px; }
-.mapa-popup p { margin: 5px 0; }
-.mapa-popup button { display: inline-block; margin: 6px 6px 2px 0; padding: 7px 9px; border: 0; border-radius: 6px; background: #8e3434; color: white; font-weight: bold; cursor: pointer; }
+.mapa-popup p { margin: 7px 0; }
+.mapa-popup button { display: inline-block; margin: 4px 5px 3px 0; padding: 8px 10px; border: 0; border-radius: 6px; background: #8e3434; color: white; font: 700 12px Arial, sans-serif; cursor: pointer; }
 .mapa-popup a { color: #174b80; }
-@media (max-width:780px) {
+.mapa-popup .mapa-popup-den { border-bottom: 1px solid #eee0cb; padding: 8px 0; }
+.mapa-tooltip { font: 700 13px Arial, sans-serif; }
+@media (max-width: 820px) {
   .mapa-rozlozeni { grid-template-columns: 1fr; }
-  #advent-mapa { height: 460px; }
-  .mapa-seznam { height: 390px; }
+  #advent-mapa { height: 410px; }
+  .mapa-seznam { height: 360px; }
+  .mapa-lista { gap: 8px; }
 }
-@media (prefers-reduced-motion: reduce) { .mapa-pin { transition: none; } }
+@media (prefers-reduced-motion: reduce) { .mapa-den { transition: none; } }
 </style>
 
 
-<!-- MAPA ADVENTNÍCH ZASTAVENÍ – všechna místa ze sloupce C aktuální tabulky -->
+<!-- MAPA ADVENTNÍCH ZASTAVENÍ – 24 dnů, snadné vyhledání podle data -->
 <section class="panel mapa-panel" id="mapa" aria-labelledby="mapa-nadpis">
   <h2 id="mapa-nadpis">📍 Mapa adventních zastavení</h2>
-  <p class="mapa-uvod">Najděte všech 24 adventních okének v Jáchymově a okolí. Klikněte na číslo dne nebo na značku v mapě. Na jednom místě se může konat více setkání.</p>
+  <p class="mapa-uvod">Vyberte si den a mapa vás přiblíží přímo k jeho adventnímu místu. Na některých místech se koná více akcí, proto mohou sdílet stejnou značku.</p>
+  <div class="mapa-lista">
+    <label for="mapa-vyber-dne">Které okénko hledáte?</label>
+    <select id="mapa-vyber-dne"><option value="">Vyberte den (1.–24. prosince)</option></select>
+    <button type="button" id="mapa-cele-mesto">Centrum Jáchymova</button>
+    <button type="button" id="mapa-vsechna-mista">Všechna místa</button>
+  </div>
+  <p id="mapa-popis-vyberu" class="mapa-popis-vyberu" role="status">Vyberte adventní den nahoře nebo v seznamu vedle mapy. Mapa se automaticky přiblíží na správné místo.</p>
   <div class="mapa-rozlozeni">
     <div id="advent-mapa" role="region" aria-label="Interaktivní mapa adventních zastavení v Jáchymově">
-      <div class="mapa-nacita">Načítám mapu… Adresy všech dnů najdete také v seznamu vedle mapy.</div>
+      <div class="mapa-nacita">Načítám mapu… Pokud se mapa nenačte, všech 24 míst lze otevřít přímo přes odkazy „Otevřít v mapách“ v seznamu.</div>
     </div>
-    <div class="mapa-seznam" id="mapa-seznam" aria-label="Seznam adventních míst podle dnů"></div>
+    <div class="mapa-seznam" id="mapa-seznam" aria-label="Seznam adventních zastavení podle dnů"></div>
   </div>
-  <p class="mapa-upozorneni">Poloha altánku u DPS (16. 12.), domu č. 145 (21. 12.) a Taverny Terasa (22. 12.) je zatím zakreslena <strong>orientačně</strong>. Přesné místo konání vždy najdete také v detailu příslušného adventního okénka. Mapové podklady © OpenStreetMap.</p>
+  <p class="mapa-upozorneni">Poloha altánku u DPS (16. 12.), Regentu (21. 12.) a Taverny Terasa (22. 12.) je orientační. Přesné pokyny k místu setkání naleznete v programu daného dne. Podklad mapy: OpenStreetMap.</p>
 </section>
 
 <section class="panel" id="informace">
@@ -835,7 +853,7 @@ navigation.forEach((p, i) => {
 <!-- KONEC AUTOMATICKÉHO ROZSVĚCENÍ -->
 
 
-<!-- Údaje poloh jsou z veřejných adresních a místopisných zdrojů; názvy míst pochází z tabulky. -->
+<!-- MAPOVÁ NAVIGACE – bez zásahu do ostatního programu -->
 <script>
 (() => {
   "use strict";
@@ -1011,78 +1029,182 @@ navigation.forEach((p, i) => {
 ];
   const seznam = document.getElementById("mapa-seznam");
   const mapDiv = document.getElementById("advent-mapa");
+  const select = document.getElementById("mapa-vyber-dne");
+  const stav = document.getElementById("mapa-popis-vyberu");
+  const centrum = [50.3695, 12.9175];
+  const podleDne = new Map(mista.map(m => [m.den, m]));
+  const skupiny = new Map();
+  const radky = new Map();
+  const markerDne = new Map();
   let mapa = null;
-  const denNaMarker = {};
-  const groups = new Map();
-  const mapSearch = item => "https://www.google.com/maps/search/?api=1&query=" + encodeURIComponent(item.lokace + ", Jáchymov, Česko");
-  const popupLabel = den => String(den) + ". prosince";
+  let vybranyDen = null;
 
-  mista.forEach(item => {
-    const groupingKey = item.lat.toFixed(6) + "," + item.lng.toFixed(6);
-    if (!groups.has(groupingKey)) groups.set(groupingKey, []);
-    groups.get(groupingKey).push(item);
-    const row = document.createElement("div"); row.className = "mapa-den";
-    const c = document.createElement("span"); c.className = "mapa-cislo"; c.textContent = item.den;
-    const info = document.createElement("div"); info.className = "mapa-den-info";
-    const loc = document.createElement("strong"); loc.className = "mapa-misto"; loc.textContent = item.lokace;
-    const controls = document.createElement("div"); controls.className = "mapa-ovladani";
-    const focus = document.createElement("button"); focus.type = "button"; focus.textContent = "Zobrazit na mapě";
-    focus.onclick = () => {
-      if (mapa && denNaMarker[item.den]) {
-        mapa.setView([item.lat, item.lng], Math.max(mapa.getZoom(), 16), {animate:true});
-        denNaMarker[item.den].openPopup();
-        mapDiv.scrollIntoView({behavior:"smooth",block:"center"});
-      } else {
-        window.open(mapSearch(item), "_blank", "noopener,noreferrer");
-      }
-    };
-    const detail = document.createElement("button"); detail.type="button";detail.textContent="Program";
-    detail.onclick = () => openDay(item.den);
-    const gmaps = document.createElement("a"); gmaps.textContent="Vyhledat adresu";
-    gmaps.href=mapSearch(item);gmaps.target="_blank";gmaps.rel="noopener noreferrer";
+  const mapSearch = item => "https://www.google.com/maps/search/?api=1&query=" + encodeURIComponent(item.lokace + ", Jáchymov, Česko");
+  mista.forEach(m => {
+    const key = m.lat.toFixed(6) + "," + m.lng.toFixed(6);
+    if (!skupiny.has(key)) skupiny.set(key, []);
+    skupiny.get(key).push(m);
+
+    const opt = document.createElement("option");
+    opt.value = String(m.den);
+    opt.textContent = m.den + ". prosince – " + m.lokace;
+    select.appendChild(opt);
+
+    const row = document.createElement("div");
+    row.className = "mapa-den";
+    const cislo = document.createElement("button");
+    cislo.type = "button";
+    cislo.className = "mapa-cislo";
+    cislo.textContent = m.den;
+    cislo.title = "Najít " + m.den + ". prosince na mapě";
+    cislo.onclick = () => vyberDen(m.den);
+    const info = document.createElement("div");
+    info.className = "mapa-den-info";
+    const loc = document.createElement("strong");
+    loc.className = "mapa-misto";
+    loc.textContent = m.lokace;
+    const controls = document.createElement("div");
+    controls.className = "mapa-ovladani";
+    const focus = document.createElement("button");
+    focus.type = "button";
+    focus.textContent = "Najít na mapě";
+    focus.onclick = () => vyberDen(m.den);
+    const detail = document.createElement("button");
+    detail.type = "button";
+    detail.textContent = "Program";
+    detail.onclick = () => openDay(m.den);
+    const gmaps = document.createElement("a");
+    gmaps.textContent = "Otevřít v mapách";
+    gmaps.href = mapSearch(m);
+    gmaps.target = "_blank";
+    gmaps.rel = "noopener noreferrer";
     controls.append(focus, detail, gmaps);
     info.append(loc);
-    if (item.orientacni) { const a = document.createElement("span"); a.className="mapa-orientacni"; a.textContent="Poloha v mapě je orientační"; info.appendChild(a); }
-    info.appendChild(controls); row.append(c,info); seznam.appendChild(row);
+    if (m.orientacni) {
+      const warn = document.createElement("span");
+      warn.className = "mapa-orientacni";
+      warn.textContent = "Orientační poloha";
+      info.appendChild(warn);
+    }
+    info.appendChild(controls);
+    row.append(cislo, info);
+    seznam.appendChild(row);
+    radky.set(m.den, row);
+  });
+
+  function zvýrazniDen(den) {
+    radky.forEach((row, n) => row.classList.toggle("aktivni", den === n));
+    if (mapa) {
+      const aktivni = markerDne.get(den);
+      // Značky jsou malé a klikatelné; není potřeba překrývat mapu dlouhými čísly.
+      new Set(markerDne.values()).forEach(marker => marker.setStyle({
+        radius: marker === aktivni ? 13 : 9,
+        color: marker === aktivni ? "#ffe7a2" : "#fff4e0",
+        fillColor: marker === aktivni ? "#f5b441" : "#a13e36",
+        fillOpacity: marker === aktivni ? 1 : 0.93,
+        weight: marker === aktivni ? 3 : 2
+      }));
+      if (aktivni) aktivni.bringToFront();
+    }
+  }
+
+  function vyberDen(den) {
+    const m = podleDne.get(Number(den));
+    if (!m) return;
+    vybranyDen = m.den;
+    select.value = String(m.den);
+    stav.replaceChildren();
+    const title = document.createElement("strong");
+    title.textContent = m.den + ". prosince – ";
+    stav.append(title, document.createTextNode(m.lokace + (m.orientacni ? " (orientační poloha)" : "")));
+    zvýrazniDen(m.den);
+    if (mapa) {
+      mapa.invalidateSize();
+      mapa.setView([m.lat, m.lng], 17, {animate: false});
+      const marker = markerDne.get(m.den);
+      if (marker) marker.openPopup();
+      mapDiv.scrollIntoView({block: "center", behavior: "smooth"});
+    } else {
+      // Když mapový podklad selže, uživatel má stále funkční externí mapu.
+      window.open(mapSearch(m), "_blank", "noopener,noreferrer");
+    }
+  }
+  select.addEventListener("change", () => { if (select.value) vyberDen(Number(select.value)); });
+  document.getElementById("mapa-cele-mesto").addEventListener("click", () => {
+    vybranyDen = null;
+    select.value = "";
+    stav.textContent = "Zobrazuji centrum Jáchymova. Vyberte den pro přiblížení konkrétního místa.";
+    zvýrazniDen(null);
+    if (mapa) { mapa.closePopup(); mapa.invalidateSize(); mapa.setView(centrum, 15, {animate: false}); }
+  });
+  document.getElementById("mapa-vsechna-mista").addEventListener("click", () => {
+    vybranyDen = null;
+    select.value = "";
+    stav.textContent = "Zobrazuji všechna adventní zastavení včetně těch mimo centrum Jáchymova.";
+    zvýrazniDen(null);
+    if (mapa) {
+      mapa.closePopup(); mapa.invalidateSize();
+      mapa.fitBounds(mista.map(m => [m.lat, m.lng]), {padding: [35, 35], maxZoom: 14, animate: false});
+    }
   });
 
   window.addEventListener("load", () => {
     if (!window.L) {
-      mapDiv.querySelector(".mapa-nacita").textContent = "Mapu se nepodařilo načíst. Použijte odkazy „Vyhledat adresu“ v seznamu všech 24 dnů.";
+      const loader = mapDiv.querySelector(".mapa-nacita");
+      if (loader) loader.textContent = "Mapové podklady se nepodařilo načíst. V seznamu vedle mapy použijte tlačítko „Otevřít v mapách“ u vybraného dne.";
       return;
     }
-    mapa = L.map(mapDiv,{scrollWheelZoom:false}).setView([50.369,12.920],13);
-    L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
-      attribution:'&copy; <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a>',
-      maxZoom:19
-    }).addTo(mapa);
-    const bounds=[];
-    groups.forEach(items => {
-      const lat = items[0].lat, lon = items[0].lng;
-      const d = items.map(x=>x.den);
-      const abbrev=d.join(" · ");
-      const width=Math.max(38,14+abbrev.length*7.4);
-      const marker=L.marker([lat,lon],{
-        icon:L.divIcon({className:"mapa-pin-wrap",html:'<span class="mapa-pin">'+abbrev+'</span>',iconSize:[1,1],iconAnchor:[0,0]})
+    try {
+      mapa = L.map(mapDiv, {scrollWheelZoom: false, zoomControl: true, tap: true}).setView(centrum, 15);
+      L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
+        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a>',
+        maxZoom: 19
       }).addTo(mapa);
-      const popup=document.createElement("div");popup.className="mapa-popup";
-      const title=document.createElement("h3");title.textContent=d.map(popupLabel).join(" · ");popup.appendChild(title);
-      items.forEach(item=>{
-        const loc=document.createElement("p");loc.textContent=item.lokace;popup.appendChild(loc);
-        const action=document.createElement("button");action.type="button";action.textContent="Otevřít program „"+item.den+"“";
-        action.addEventListener("click",()=>openDay(item.den));popup.appendChild(action);
-        if(item.orientacni){ const warn=document.createElement("p");warn.className="mapa-orientacni";warn.textContent="Orientační poloha — ověřte adresu v detailu.";popup.appendChild(warn); }
-        denNaMarker[item.den]=marker;
+      skupiny.forEach(items => {
+        const pos = items[0];
+        const days = items.map(i => i.den);
+        const marker = L.circleMarker([pos.lat, pos.lng], {
+          radius: 9, color: "#fff4e0", weight: 2, fillColor: "#a13e36", fillOpacity: 0.93
+        }).addTo(mapa);
+        // Kliknutí na značku ukáže všechny dny konané v tomtéž místě.
+        marker.bindTooltip("Dny: " + days.join(", "), {direction: "top", className: "mapa-tooltip"});
+        const popup = document.createElement("div"); popup.className = "mapa-popup";
+        const name = document.createElement("h3");
+        name.textContent = days.length > 1 ? "Adventní zastavení – dny " + days.join(", ") : days[0] + ". prosince";
+        popup.appendChild(name);
+        items.forEach(item => {
+          const section = document.createElement("div"); section.className = "mapa-popup-den";
+          const loc = document.createElement("p");
+          loc.textContent = item.den + ". 12. – " + item.lokace;
+          const program = document.createElement("button");
+          program.type = "button"; program.textContent = "Program " + item.den + ". 12.";
+          program.onclick = () => openDay(item.den);
+          const choose = document.createElement("button");
+          choose.type = "button"; choose.textContent = "Vybrat den " + item.den;
+          choose.onclick = () => {
+            vybranyDen = item.den;
+            select.value = String(item.den);
+            stav.textContent = item.den + ". prosince – " + item.lokace;
+            zvýrazniDen(item.den);
+            radky.get(item.den).scrollIntoView({block:"nearest"});
+          };
+          section.append(loc, program, choose);
+          popup.appendChild(section);
+          markerDne.set(item.den, marker);
+        });
+        marker.bindPopup(popup, {maxWidth: 325, minWidth: 220});
       });
-      marker.bindPopup(popup,{maxWidth:310});
-      bounds.push([lat,lon]);
-    });
-    if(bounds.length)mapa.fitBounds(bounds,{padding:[34,34],maxZoom:15});
-    mapDiv.querySelector(".mapa-nacita").remove();
-    setTimeout(()=>mapa.invalidateSize(),120);
-    // Navigace z původního obrázku může mapu otevřít i po posunu stránky.
-    document.querySelectorAll('a[href="#mapa"], button[aria-label^="Mapa Jáchymova"]').forEach(el=>
-      el.addEventListener("click",()=>setTimeout(()=>mapa.invalidateSize(),450)));
+      const loader = mapDiv.querySelector(".mapa-nacita");
+      if (loader) loader.remove();
+      // Leaflet potřebuje po navigaci přes obrázek přepočítat velikost kontejneru.
+      document.querySelectorAll('a[href="#mapa"], button[aria-label^="Mapa Jáchymova"]').forEach(el =>
+        el.addEventListener("click", () => setTimeout(() => mapa.invalidateSize(), 350)));
+      setTimeout(() => mapa.invalidateSize(), 200);
+    } catch (e) {
+      mapa = null;
+      const loader = mapDiv.querySelector(".mapa-nacita");
+      if (loader) loader.textContent = "Mapu se nepodařilo zobrazit. Každé místo lze otevřít přes „Otevřít v mapách“ v seznamu.";
+    }
   });
 })();
 </script>
