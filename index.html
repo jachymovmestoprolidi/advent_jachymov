@@ -69,6 +69,43 @@ a { color: #ffe0a2; }
   .hotspot { border-radius: 2px; }
 }
 
+/* Mobilní přiblížení adventního kalendáře bez změny původního obrázku.
+   Rozšíříme celou scénu včetně klikacích okének a světel.
+   Tažením prstem lze v přiblíženém zobrazení jezdit do stran. */
+.kalendar-prohlizec { width: 100%; max-width: 1800px; margin: 0 auto; }
+.zoom-navrat { display: none; }
+@media (max-width: 700px) {
+  .kalendar-prohlizec.priblizeno {
+    overflow-x: auto;
+    overflow-y: hidden;
+    overscroll-behavior-x: contain;
+    -webkit-overflow-scrolling: touch;
+    touch-action: pan-x pan-y;
+  }
+  .kalendar-prohlizec.priblizeno .scene {
+    width: 275%;
+    max-width: none;
+    margin: 0;
+  }
+  .zoom-navrat:not([hidden]) {
+    display: inline-flex;
+    position: fixed;
+    right: 12px;
+    bottom: 14px;
+    z-index: 90;
+    background: #fff5e5;
+    color: #312317;
+    border: 2px solid #b89458;
+    border-radius: 999px;
+    font: bold 15px/1.3 Arial, sans-serif;
+    padding: 12px 16px;
+    box-shadow: 0 3px 14px rgba(0,0,0,.35);
+    cursor: pointer;
+    touch-action: manipulation;
+  }
+  .kalendar-prohlizec.priblizeno .hotspot { border-radius: 4px; }
+}
+
 /* Překrytí POUZE nápisu druhého tlačítka, nikoli úprava obrázku města.
    Souřadnice SVG odpovídají původnímu obrázku 1672 × 941 px.
    Podkladovou PNG ilustraci neměníme. */
@@ -86,6 +123,7 @@ a { color: #ffe0a2; }
 </head>
 <body>
 
+<div class="kalendar-prohlizec" id="kalendar-prohlizec">
 <div class="scene" id="scene">
   <img src="Živý adventní kalendář Jáchymova.png"
        alt="Zasněžený Jáchymov s 24 adventními okénky">
@@ -137,6 +175,9 @@ a { color: #ffe0a2; }
     </g>
   </svg>
 </div>
+</div>
+<!-- Na mobilu viditelné pouze při přiblížení; nezasahuje do původní ilustrace. -->
+<button class="zoom-navrat" id="zoom-navrat" type="button" hidden aria-label="Vrátit adventní kalendář na původní velikost">− Zobrazit celý kalendář</button>
 
 <!-- DŮLEŽITÉ INFORMACE: text schválený pořadatelkou 21. 11. 2026 -->
 <style>
@@ -1079,11 +1120,49 @@ navigation.forEach((p, i) => {
   b.setAttribute("aria-label", labels[i]);
   b.title = labels[i];
   b.onclick = () => {
+    // První ilustrované tlačítko na mobilu přiblíží celý kalendář.
+    // Na počítači se stejně jako dosud vrací k horní části obrázku.
+    if (i === 0 && window.matchMedia("(max-width: 700px)").matches) {
+      zapnoutPriblizeni();
+      return;
+    }
     const cil = document.querySelector(p[2]);
     if (cil) cil.scrollIntoView({ behavior: "smooth", block: "start" });
   };
   scene.appendChild(b);
 });
+
+// Zvětšení zachovává poměr stran a souřadnice všech 24 klikacích okének.
+const zoomKontejner = document.getElementById("kalendar-prohlizec");
+const zoomNavrat = document.getElementById("zoom-navrat");
+const mobilniZobrazeni = window.matchMedia("(max-width: 700px)");
+function zapnoutPriblizeni() {
+  zoomKontejner.classList.add("priblizeno");
+  zoomNavrat.hidden = false;
+  requestAnimationFrame(() => {
+    zoomKontejner.scrollLeft = 0;
+    zoomKontejner.scrollIntoView({ behavior: "smooth", block: "start" });
+  });
+}
+function vypnoutPriblizeni() {
+  zoomKontejner.classList.remove("priblizeno");
+  zoomNavrat.hidden = true;
+  zoomKontejner.scrollLeft = 0;
+  zoomKontejner.scrollIntoView({ behavior: "smooth", block: "start" });
+}
+zoomNavrat.addEventListener("click", vypnoutPriblizeni);
+function kontrolaSire() {
+  if (!mobilniZobrazeni.matches && zoomKontejner.classList.contains("priblizeno")) {
+    zoomKontejner.classList.remove("priblizeno");
+    zoomNavrat.hidden = true;
+    zoomKontejner.scrollLeft = 0;
+  }
+}
+if (mobilniZobrazeni.addEventListener) {
+  mobilniZobrazeni.addEventListener("change", kontrolaSire);
+} else if (mobilniZobrazeni.addListener) {
+  mobilniZobrazeni.addListener(kontrolaSire);
+}
 </script>
 
 
