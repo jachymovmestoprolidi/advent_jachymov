@@ -83,6 +83,8 @@ a { color: #ffe0a2; }
 /* Podsvícení kalendáře nebrání klikání na okénka ani na navigaci. */
 .hotspot { z-index: 3; }
 </style>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoT52WAvM2kqjQ=" crossorigin="anonymous">
+<script defer src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin="anonymous"></script>
 </head>
 <body>
 
@@ -206,6 +208,56 @@ a { color: #ffe0a2; }
 
 <!-- PAPÍROVÁ KARTIČKA: samostatné tiskové PDF A4, viz odkaz výše -->
 <!-- KONEC DĚTSKÉ HRY -->
+
+
+<style>
+/* Interaktivní mapa je samostatný blok. Nedotýká se původní grafiky okének. */
+.mapa-panel { max-width: 1150px; }
+.mapa-panel h2 { margin-top: 0; }
+.mapa-uvod { line-height: 1.6; }
+.mapa-rozlozeni { display: grid; grid-template-columns: minmax(0, 1.65fr) minmax(260px, 1fr); gap: 15px; align-items: stretch; }
+#advent-mapa { position: relative; height: 570px; min-width: 0; border: 2px solid #d6b477; border-radius: 14px; overflow: hidden; background: #e7eae2; color: #2c2c2c; font-family: Arial, sans-serif; }
+.mapa-nacita { padding: 28px; text-align: center; line-height: 1.6; }
+.mapa-seznam { height: 570px; min-width: 0; overflow-y: auto; border: 1px solid #9d8667; border-radius: 14px; background: #fff7e9; color: #34291e; font-family: Arial, sans-serif; }
+.mapa-den { display: flex; align-items: flex-start; gap: 10px; padding: 13px 12px; border-bottom: 1px solid #e6d8c5; }
+.mapa-den:last-child { border-bottom: none; }
+.mapa-cislo { background: #8e3434; border-radius: 100%; color: white; font-weight: 700; min-width: 38px; width: 38px; height: 38px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.mapa-den-info { display: grid; gap: 5px; min-width: 0; flex: 1; }
+.mapa-misto { font-size: 14px; line-height: 1.4; overflow-wrap: anywhere; }
+.mapa-ovladani { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+.mapa-ovladani button, .mapa-ovladani a { border-radius: 6px; font: 700 12px/1.25 Arial, sans-serif; border: 1px solid #8c6b47; background: #f8e0b3; color: #3c2d1f; padding: 7px 9px; text-decoration: none; cursor: pointer; }
+.mapa-ovladani a { background: white; }
+.mapa-ovladani button:focus-visible, .mapa-ovladani a:focus-visible { outline: 3px solid #a85023; outline-offset: 2px; }
+.mapa-orientacni { font: italic 12px/1.4 Arial, sans-serif; color: #8e3434; }
+.mapa-upozorneni { font: 13px/1.6 Arial, sans-serif; color: #e6d7c0; margin-bottom: 0; }
+.mapa-pin-wrap { background: transparent; border: 0; }
+.mapa-pin { display: flex; align-items: center; justify-content: center; padding: 4px 7px; background: #8e3434; color: #fff; border: 2px solid #fff3dd; box-shadow: 0 2px 9px #2632447f; border-radius: 999px; white-space: nowrap; font: 700 13px/1 Arial, sans-serif; transform: translate(-50%, -50%); }
+.mapa-popup { color: #302519; font: 14px/1.5 Arial, sans-serif; }
+.mapa-popup h3 { color: #742d2d; margin: 0 0 7px; font-size: 16px; }
+.mapa-popup p { margin: 5px 0; }
+.mapa-popup button { display: inline-block; margin: 6px 6px 2px 0; padding: 7px 9px; border: 0; border-radius: 6px; background: #8e3434; color: white; font-weight: bold; cursor: pointer; }
+.mapa-popup a { color: #174b80; }
+@media (max-width:780px) {
+  .mapa-rozlozeni { grid-template-columns: 1fr; }
+  #advent-mapa { height: 460px; }
+  .mapa-seznam { height: 390px; }
+}
+@media (prefers-reduced-motion: reduce) { .mapa-pin { transition: none; } }
+</style>
+
+
+<!-- MAPA ADVENTNÍCH ZASTAVENÍ – všechna místa ze sloupce C aktuální tabulky -->
+<section class="panel mapa-panel" id="mapa" aria-labelledby="mapa-nadpis">
+  <h2 id="mapa-nadpis">📍 Mapa adventních zastavení</h2>
+  <p class="mapa-uvod">Najděte všech 24 adventních okének v Jáchymově a okolí. Klikněte na číslo dne nebo na značku v mapě. Na jednom místě se může konat více setkání.</p>
+  <div class="mapa-rozlozeni">
+    <div id="advent-mapa" role="region" aria-label="Interaktivní mapa adventních zastavení v Jáchymově">
+      <div class="mapa-nacita">Načítám mapu… Adresy všech dnů najdete také v seznamu vedle mapy.</div>
+    </div>
+    <div class="mapa-seznam" id="mapa-seznam" aria-label="Seznam adventních míst podle dnů"></div>
+  </div>
+  <p class="mapa-upozorneni">Poloha altánku u DPS (16. 12.), domu č. 145 (21. 12.) a Taverny Terasa (22. 12.) je zatím zakreslena <strong>orientačně</strong>. Přesné místo konání vždy najdete také v detailu příslušného adventního okénka. Mapové podklady © OpenStreetMap.</p>
+</section>
 
 <section class="panel" id="informace">
   <h2>Praktické informace</h2>
@@ -639,13 +691,13 @@ const ODKAZ_HRACI_KARTICKY = "https://script.google.com/macros/s/AKfycbzhx3HrJVU
 const navigation = [
   [18, 91, "#scene"],
   [39, 91, ODKAZ_HRACI_KARTICKY],
-  [61, 91, "#scene"], // Mapa bude doplněna později.
+  [61, 91, "#mapa"], // Mapa všech 24 adventních lokalit.
   [82, 91, "#informace"]
 ];
 const labels = [
   "Adventní kalendář",
   "Tvoje hrací kartička – otevřít online hru v nové záložce",
-  "Mapa Jáchymova – připravujeme",
+  "Mapa Jáchymova – 24 adventních zastavení",
   "Praktické informace"
 ];
 navigation.forEach((p, i) => {
@@ -782,5 +834,257 @@ navigation.forEach((p, i) => {
 </script>
 <!-- KONEC AUTOMATICKÉHO ROZSVĚCENÍ -->
 
+
+<!-- Údaje poloh jsou z veřejných adresních a místopisných zdrojů; názvy míst pochází z tabulky. -->
+<script>
+(() => {
+  "use strict";
+  const mista = [
+  {
+    "den": 1,
+    "lat": 50.37067003697608,
+    "lng": 12.913773813443482,
+    "orientacni": false,
+    "lokace": "Café 1516 - Mincovní 33"
+  },
+  {
+    "den": 2,
+    "lat": 50.36496329720424,
+    "lng": 12.922685320406462,
+    "orientacni": false,
+    "lokace": "Fotoateliér - Třída Dukelských hrdinů 334"
+  },
+  {
+    "den": 3,
+    "lat": 50.371414444444,
+    "lng": 12.913575277778,
+    "orientacni": false,
+    "lokace": "Radnice - náměstí Republiky 1"
+  },
+  {
+    "den": 4,
+    "lat": 50.3647,
+    "lng": 12.92131,
+    "orientacni": false,
+    "lokace": "Špitální kostelík - Bělohorská 714 (prostranství před budovou)"
+  },
+  {
+    "den": 5,
+    "lat": 50.375265277778,
+    "lng": 12.910700833333,
+    "orientacni": false,
+    "lokace": "Na Svornosti ev.č 3, posledni dům na kopci v Jáchymově (směr Boží dar), zahrada"
+  },
+  {
+    "den": 6,
+    "lat": 50.37129593,
+    "lng": 12.8936882,
+    "orientacni": false,
+    "lokace": "Řetízkárna - Rovnost"
+  },
+  {
+    "den": 7,
+    "lat": 50.36484,
+    "lng": 12.93494,
+    "orientacni": false,
+    "lokace": "K Lanovce 1050"
+  },
+  {
+    "den": 8,
+    "lat": 50.371414444444,
+    "lng": 12.913575277778,
+    "orientacni": false,
+    "lokace": "Radnice - náměstí Republiky 1 (KKC)"
+  },
+  {
+    "den": 9,
+    "lat": 50.37227,
+    "lng": 12.91303,
+    "orientacni": false,
+    "lokace": "Kostel sv. Jáchyma - náměstí Republiky"
+  },
+  {
+    "den": 10,
+    "lat": 50.363436098937,
+    "lng": 12.930817913973,
+    "orientacni": false,
+    "lokace": "Husova 992 - ZŠ M.C.Sklodowské a MŠ Jáchymov"
+  },
+  {
+    "den": 11,
+    "lat": 50.369929166667,
+    "lng": 12.960856944444,
+    "orientacni": false,
+    "lokace": "Suchá 132 - U oveček."
+  },
+  {
+    "den": 12,
+    "lat": 50.3647,
+    "lng": 12.92131,
+    "orientacni": false,
+    "lokace": "Špitální kostelík - Bělohorská 714"
+  },
+  {
+    "den": 13,
+    "lat": 50.371414444444,
+    "lng": 12.913575277778,
+    "orientacni": false,
+    "lokace": "Náměstí Republiky (před budovou radnice)"
+  },
+  {
+    "den": 14,
+    "lat": 50.367736666667,
+    "lng": 12.916719722222,
+    "orientacni": false,
+    "lokace": "Evangelický kostelík, Mincovní 681"
+  },
+  {
+    "den": 15,
+    "lat": 50.363436098937,
+    "lng": 12.930817913973,
+    "orientacni": false,
+    "lokace": "Husova 992 - ZŠ M.C.Sklodowské a MŠ Jáchymov (jídelna)"
+  },
+  {
+    "den": 16,
+    "lat": 50.36712,
+    "lng": 12.9175,
+    "orientacni": true,
+    "lokace": "Na Slovanech - Altánek na hřišti před DPS"
+  },
+  {
+    "den": 17,
+    "lat": 50.371414444444,
+    "lng": 12.913575277778,
+    "orientacni": false,
+    "lokace": "Radnice - náměstí Republiky 1 (KKC)"
+  },
+  {
+    "den": 18,
+    "lat": 50.374209722222,
+    "lng": 12.9116025,
+    "orientacni": false,
+    "lokace": "Třída Čs. armády 99"
+  },
+  {
+    "den": 19,
+    "lat": 50.371414444444,
+    "lng": 12.913575277778,
+    "orientacni": false,
+    "lokace": "Radnice - náměstí Republiky 1"
+  },
+  {
+    "den": 20,
+    "lat": 50.3647,
+    "lng": 12.92131,
+    "orientacni": false,
+    "lokace": "Špitální kostelík - Bělohorská 714"
+  },
+  {
+    "den": 21,
+    "lat": 50.370375,
+    "lng": 12.916008,
+    "orientacni": true,
+    "lokace": "Náměstí Republiky 145 - (REGENT)"
+  },
+  {
+    "den": 22,
+    "lat": 50.36056,
+    "lng": 12.93586,
+    "orientacni": true,
+    "lokace": "Dvořákova 643 - Taverna Terasa"
+  },
+  {
+    "den": 23,
+    "lat": 50.364667777778,
+    "lng": 12.922561388889,
+    "orientacni": false,
+    "lokace": "tř. Dukelských hrdinů - Pomník Štěpána Šlika"
+  },
+  {
+    "den": 24,
+    "lat": 50.36699208909933,
+    "lng": 12.91862592461827,
+    "orientacni": false,
+    "lokace": "tř. Dukelských hrdinů 1031 - Před budovou zdravotního střediska"
+  }
+];
+  const seznam = document.getElementById("mapa-seznam");
+  const mapDiv = document.getElementById("advent-mapa");
+  let mapa = null;
+  const denNaMarker = {};
+  const groups = new Map();
+  const mapSearch = item => "https://www.google.com/maps/search/?api=1&query=" + encodeURIComponent(item.lokace + ", Jáchymov, Česko");
+  const popupLabel = den => String(den) + ". prosince";
+
+  mista.forEach(item => {
+    const groupingKey = item.lat.toFixed(6) + "," + item.lng.toFixed(6);
+    if (!groups.has(groupingKey)) groups.set(groupingKey, []);
+    groups.get(groupingKey).push(item);
+    const row = document.createElement("div"); row.className = "mapa-den";
+    const c = document.createElement("span"); c.className = "mapa-cislo"; c.textContent = item.den;
+    const info = document.createElement("div"); info.className = "mapa-den-info";
+    const loc = document.createElement("strong"); loc.className = "mapa-misto"; loc.textContent = item.lokace;
+    const controls = document.createElement("div"); controls.className = "mapa-ovladani";
+    const focus = document.createElement("button"); focus.type = "button"; focus.textContent = "Zobrazit na mapě";
+    focus.onclick = () => {
+      if (mapa && denNaMarker[item.den]) {
+        mapa.setView([item.lat, item.lng], Math.max(mapa.getZoom(), 16), {animate:true});
+        denNaMarker[item.den].openPopup();
+        mapDiv.scrollIntoView({behavior:"smooth",block:"center"});
+      } else {
+        window.open(mapSearch(item), "_blank", "noopener,noreferrer");
+      }
+    };
+    const detail = document.createElement("button"); detail.type="button";detail.textContent="Program";
+    detail.onclick = () => openDay(item.den);
+    const gmaps = document.createElement("a"); gmaps.textContent="Vyhledat adresu";
+    gmaps.href=mapSearch(item);gmaps.target="_blank";gmaps.rel="noopener noreferrer";
+    controls.append(focus, detail, gmaps);
+    info.append(loc);
+    if (item.orientacni) { const a = document.createElement("span"); a.className="mapa-orientacni"; a.textContent="Poloha v mapě je orientační"; info.appendChild(a); }
+    info.appendChild(controls); row.append(c,info); seznam.appendChild(row);
+  });
+
+  window.addEventListener("load", () => {
+    if (!window.L) {
+      mapDiv.querySelector(".mapa-nacita").textContent = "Mapu se nepodařilo načíst. Použijte odkazy „Vyhledat adresu“ v seznamu všech 24 dnů.";
+      return;
+    }
+    mapa = L.map(mapDiv,{scrollWheelZoom:false}).setView([50.369,12.920],13);
+    L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
+      attribution:'&copy; <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a>',
+      maxZoom:19
+    }).addTo(mapa);
+    const bounds=[];
+    groups.forEach(items => {
+      const lat = items[0].lat, lon = items[0].lng;
+      const d = items.map(x=>x.den);
+      const abbrev=d.join(" · ");
+      const width=Math.max(38,14+abbrev.length*7.4);
+      const marker=L.marker([lat,lon],{
+        icon:L.divIcon({className:"mapa-pin-wrap",html:'<span class="mapa-pin">'+abbrev+'</span>',iconSize:[1,1],iconAnchor:[0,0]})
+      }).addTo(mapa);
+      const popup=document.createElement("div");popup.className="mapa-popup";
+      const title=document.createElement("h3");title.textContent=d.map(popupLabel).join(" · ");popup.appendChild(title);
+      items.forEach(item=>{
+        const loc=document.createElement("p");loc.textContent=item.lokace;popup.appendChild(loc);
+        const action=document.createElement("button");action.type="button";action.textContent="Otevřít program „"+item.den+"“";
+        action.addEventListener("click",()=>openDay(item.den));popup.appendChild(action);
+        if(item.orientacni){ const warn=document.createElement("p");warn.className="mapa-orientacni";warn.textContent="Orientační poloha — ověřte adresu v detailu.";popup.appendChild(warn); }
+        denNaMarker[item.den]=marker;
+      });
+      marker.bindPopup(popup,{maxWidth:310});
+      bounds.push([lat,lon]);
+    });
+    if(bounds.length)mapa.fitBounds(bounds,{padding:[34,34],maxZoom:15});
+    mapDiv.querySelector(".mapa-nacita").remove();
+    setTimeout(()=>mapa.invalidateSize(),120);
+    // Navigace z původního obrázku může mapu otevřít i po posunu stránky.
+    document.querySelectorAll('a[href="#mapa"], button[aria-label^="Mapa Jáchymova"]').forEach(el=>
+      el.addEventListener("click",()=>setTimeout(()=>mapa.invalidateSize(),450)));
+  });
+})();
+</script>
 </body>
 </html>
